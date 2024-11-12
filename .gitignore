@@ -3,3 +3,4 @@ data/
 *.terraform*
 *.tfstate*
 tofu.plan
+.ipynb_checkpoints/
