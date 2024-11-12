@@ -1,0 +1,8 @@
+-r services/web/requirements.txt
+jupyterlab
+jupyterlab-vim
+ipython
+black
+flake8
+diagrams
+jupyter-dash

@@ -1,0 +1,12 @@
+networkx
+numpy
+pandas
+scikit-learn
+scipy
+statsmodels
+plotly
+dash
+fastf1
+gunicorn
+psycopg2-binary
+dash-bootstrap-components
