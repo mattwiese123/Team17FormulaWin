@@ -1,37 +1,28 @@
 import pandas as pd
-from dash import Dash, dcc, html, dash_table
+from dash import Dash, dcc, html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Output, Input
-import os
-
+from .components import driver_career
+from .components import driver_perf_this_season
+from .components import driver_profile
+from .components import driver_standing
+from .components import event_title_and_weather
+from .components import interesting_fact
+from .components import lap_time_comparison
+from .components import navbar
+from .components import position_comparison
+from .components import prediction_vs_actual_table
+from .components import prediction_vs_actual_top3
+from .components import team_standing
+from .components import track_info
+from .components import track_perf
+from .components import tyre_strategy
 
 info_df = pd.read_csv("/usr/src/app/data/intermediate_tables/2019/8/info_2019_8.csv")
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL, dbc.icons.FONT_AWESOME])
 server = app.server
 
-
-navbar = dbc.NavbarSimple(
-    children=[
-        dbc.NavItem(dbc.NavLink("Page 1", href="#")),
-        dbc.DropdownMenu(
-            children=[
-                dbc.DropdownMenuItem("More pages", header=True),
-                dbc.DropdownMenuItem("Page 2", href="#"),
-                dbc.DropdownMenuItem("Page 3", href="#"),
-            ],
-            nav=True,
-            in_navbar=True,
-            label="More",
-        ),
-    ],
-    brand="FormulaWin",
-    brand_href="#",
-    color="primary",
-    dark=True,
-    fluid=True,
-    expand="xl",
-)
 
 events = {"event1": {"country": "Bahrain", "date": "2024-10-10"}}
 
