@@ -233,7 +233,7 @@ app.layout = dbc.Container(
                 ),
                 dbc.Row(
                         prediction_vs_actual_table.make_layout()
-                )],width=12)
+                )])
             ]),
 
         dbc.Stack(
