@@ -2,11 +2,12 @@ import pandas as pd
 from dash import Dash, dcc, html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Output, Input
+from .components import event_title
+from .components import weather
 from .components import driver_career
 from .components import driver_perf_this_season
 from .components import driver_profile
 from .components import driver_standing
-from .components import event_title_and_weather
 from .components import interesting_fact
 from .components import lap_time_comparison
 from .components import navbar
@@ -123,22 +124,118 @@ track_core_vis = html.Div(
 #     ]
 # )
 
+# picker = html.Div(
+#     children=[
+#         dbc.Row(
+#             children=[
+#                 dbc.Col(html.H3(id="RoundNumber"), style=center),
+#                 dbc.Col(
+#                     html.Div(
+#                         children=[
+#                             html.H5(children=("Select A RoundNumber")),
+#                             dcc.Dropdown(
+#                                 id="RoundNumber_dropdown",
+#                                 options=[
+#                                     1,2,3,4,5,21
+#                                 ],
+#                                 value = 1
+#                             ),
+#                         ],
+#                     ),
+#                     style=center,
+#                 ),
+#             ],
+#             align="center",
+#         ),
+#     ]
+# )
+#
+# driver_picker = html.Div(
+#     children=[
+#         dbc.Row(
+#             children=[
+#                 dbc.Col(html.H3(id="Driver"), style=center),
+#                 dbc.Col(
+#                     html.Div(
+#                         children=[
+#                             html.H5(children=("Select a List of Drivers")),
+#                             dcc.Dropdown(
+#                                 id="driver_picker",
+#                                 options=[
+#                                     'Alexander Albon', 'Carlos Sainz', 'Charles Leclerc', 'Fernando Alonso', 'Valtteri Bottas'
+#                                 ],
+#                                 value = ['Alexander Albon', 'Carlos Sainz'],
+#                                 multi=True
+#                             ),
+#                         ],
+#                     ),
+#                     style=center,
+#                 ),
+#             ],
+#             align="center",
+#         ),
+#     ]
+# )
+#
+# rain_picker = html.Div(
+#     children=[
+#         dbc.Row(
+#             children=[
+#                 dbc.Col(html.H3(id="has_rain"), style=center),
+#                 dbc.Col(
+#                     html.Div(
+#                         children=[
+#                             html.H5(children=("Select if it will rain on race day")),
+#                             dcc.Dropdown(
+#                                 id="rain_dropdown",
+#                                 options=[
+#                                     'True', 'False'
+#                                 ],
+#                                 value = 'True'
+#                             ),
+#                         ],
+#                     ),
+#                     style=center,
+#                 ),
+#             ],
+#             align="center",
+#         ),
+#     ]
+# )
+
+
+
 app.layout = dbc.Container(
     children=[
         # Tab 1
         navbar,
         picker,
         track_core_vis,
-        dbc.Row(
-            """
-            1-2: 
-                1: driver, driver image, driver team, driver country flag, driver country, place
-                2: driver, driver image, driver team, driver country flag, driver country, place
-                3: driver, driver image, driver team, driver country flag, driver country, place
-            3-4: 
-                1: race standings data table
-            """
-        ),
+        # picker,
+        # driver_picker,
+        # rain_picker,
+        dbc.Row([
+            dbc.Col([
+                dbc.Row(
+                        event_title.make_layout(),
+                ),
+                dbc.Row(
+                        weather.make_layout()
+                ),
+                dbc.Row(
+                        position_comparison.make_layout()
+                ),
+                dbc.Row(
+                        lap_time_comparison.make_layout()
+                ),
+                dbc.Row(
+                        tyre_strategy.make_layout()
+                ),
+                dbc.Row(
+                        prediction_vs_actual_table.make_layout()
+                )])
+            ]),
+
         dbc.Stack(
             """
             Row 1: 
@@ -190,7 +287,7 @@ app.layout = dbc.Container(
             Col 2: Team standings for season
             """
         ),
-    ],
+    ],fluid=True
 )
 
 if __name__ == "__main__":
