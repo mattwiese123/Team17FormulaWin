@@ -13,3 +13,4 @@ from .team_standing import team_standing
 from .track_info import track_info
 from .track_perf import track_perf
 from .tyre_strategy import tyre_strategy
+import dash_bootstrap_components as dbc
