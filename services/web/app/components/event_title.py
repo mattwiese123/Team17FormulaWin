@@ -13,7 +13,7 @@ def make_layout():
 
 @callback(Output("event_name", "children"), Input("RoundNumber_dropdown", "value"))
 def event_title(RoundNumber):
-    with open("sql/get_event_weather") as f:
+    with open("sql/get_event_weather.sql") as f:
         query = f.read()
     df = get_data.get_data(query.format(RoundNumber=RoundNumber))
     event_name = df["EventName"][0]

@@ -1,83 +1,35 @@
 import pandas as pd
+import dash
 from dash import Dash, dcc, html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Output, Input
 
-from .components import event_title
-from .components import weather
+# from .components import event_title
+# from .components import weather
 
 # from .components import driver_career
 # from .components import driver_perf_this_season
 # from .components import driver_profile
 # from .components import driver_standing
 # from .components import interesting_fact
-from .components import lap_time_comparison
+# from .components import lap_time_comparison
 from .components import navbar
-from .components import position_comparison
-from .components import prediction_vs_actual_table
+# from .components import position_comparison
+# from .components import prediction_vs_actual_table
 
 # from .components import prediction_vs_actual_top3
 # from .components import team_standing
 # from .components import track_info
 # from .components import track_perf
-from .components import tyre_strategy
+# from .components import tyre_strategy
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL, dbc.icons.FONT_AWESOME])
+app = Dash(
+    __package__,
+    external_stylesheets=[dbc.themes.JOURNAL, dbc.icons.FONT_AWESOME],
+    use_pages=True,
+)
 server = app.server
 
-
-# events = {"event1": {"country": "Bahrain", "date": "2024-10-10"}}
-#
-#
-# @app.callback(
-#     Output("event_name", "children"),
-#     Input("event_dropdown", "value"),
-# )
-# def display_select_event_name(event):
-#     preamble = "2024 Grand Prix"
-#     if event is None:
-#         return preamble
-#     return preamble + f" {event['country']}"
-#
-#
-# @app.callback(
-#     Output("event_date", "children"),
-#     Input("event_dropdown", "value"),
-# )
-# def display_select_event_date(event):
-#     preamble = "Event Date:"
-#     if event is None:
-#         return preamble
-#     return preamble + f" {event['date']}"
-#
-#
-center = {"text_align": "center"}
-#
-# picker = html.Div(
-#     children=[
-#         dbc.Row(
-#             children=[
-#                 dbc.Col(html.H3(id="event_name"), style=center),
-#                 dbc.Col(html.H3(id="event_date"), style=center),
-#                 dbc.Col(
-#                     html.Div(
-#                         children=[
-#                             html.H5(children=("Select Race")),
-#                             dcc.Dropdown(
-#                                 id="event_dropdown",
-#                                 options=[
-#                                     {"label": k, "value": v} for k, v in events.items()
-#                                 ],
-#                             ),
-#                         ],
-#                     ),
-#                     style=center,
-#                 ),
-#             ],
-#             align="center",
-#         ),
-#     ]
-# )
 
 # track_core_vis = html.Div(
 #     children=[
@@ -125,112 +77,16 @@ center = {"text_align": "center"}
 #     ]
 # )
 
-picker = html.Div(
-    children=[
-        dbc.Row(
-            children=[
-                dbc.Col(html.H3(id="RoundNumber"), style=center),
-                dbc.Col(
-                    html.Div(
-                        children=[
-                            html.H5(children=("Select A RoundNumber")),
-                            dcc.Dropdown(
-                                id="RoundNumber_dropdown",
-                                options=[1, 2, 3, 4, 5, 21],
-                                value=1,
-                            ),
-                        ],
-                    ),
-                    style=center,
-                ),
-            ],
-            align="center",
-        ),
-    ]
-)
-#
-driver_picker = html.Div(
-    children=[
-        dbc.Row(
-            children=[
-                dbc.Col(html.H3(id="Driver"), style=center),
-                dbc.Col(
-                    html.Div(
-                        children=[
-                            html.H5(children=("Select a List of Drivers")),
-                            dcc.Dropdown(
-                                id="driver_picker",
-                                options=[
-                                    "Alexander Albon",
-                                    "Carlos Sainz",
-                                    "Charles Leclerc",
-                                    "Fernando Alonso",
-                                    "Valtteri Bottas",
-                                ],
-                                value=["Alexander Albon", "Carlos Sainz"],
-                                multi=True,
-                            ),
-                        ],
-                    ),
-                    style=center,
-                ),
-            ],
-            align="center",
-        ),
-    ]
-)
-#
-rain_picker = html.Div(
-    children=[
-        dbc.Row(
-            children=[
-                dbc.Col(html.H3(id="has_rain"), style=center),
-                dbc.Col(
-                    html.Div(
-                        children=[
-                            html.H5(children=("Select if it will rain on race day")),
-                            dcc.Dropdown(
-                                id="rain_dropdown",
-                                options=["True", "False"],
-                                value="True",
-                            ),
-                        ],
-                    ),
-                    style=center,
-                ),
-            ],
-            align="center",
-        ),
-    ]
-)
-
 
 app.layout = dbc.Container(
     children=[
-        # Tab 1
-        # navbar,
-        # picker,
-        # track_core_vis,
-        picker,
-        driver_picker,
-        rain_picker,
+        # navbar
         dbc.Row(
             [
-                dbc.Col(
-                    [
-                        dbc.Row(
-                            event_title.make_layout(),
-                        ),
-                        dbc.Row(weather.make_layout()),
-                        dbc.Row(position_comparison.make_layout()),
-                        dbc.Row(lap_time_comparison.make_layout()),
-                        dbc.Row(tyre_strategy.make_layout()),
-                        dbc.Row(prediction_vs_actual_table.make_layout()),
-                    ]
-                )
+                navbar.make_layout(),
             ]
         ),
-        # Tab 2
+        dash.page_container,
     ],
     fluid=True,
 )

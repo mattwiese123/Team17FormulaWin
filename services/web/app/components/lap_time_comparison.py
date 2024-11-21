@@ -17,7 +17,7 @@ def make_layout():
     Input("driver_picker", "value"),
 )
 def lap_time_comparison(RoundNumber, Drivers):
-    with open("sql/get_driver_compare") as f:
+    with open("sql/get_driver_compare.sql") as f:
         query = f.read()
     df = get_data.get_data(query.format(RoundNumber=RoundNumber))
     lapTime_fig = px.line(

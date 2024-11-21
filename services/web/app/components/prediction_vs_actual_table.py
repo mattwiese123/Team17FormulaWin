@@ -26,7 +26,7 @@ def make_layout():
     Input("rain_dropdown", "value"),
 )
 def prediction_vs_actual_table(RoundNumber, has_rain):
-    with open("sql/get_pred") as f:
+    with open("sql/get_pred.sql") as f:
         query = f.read()
     df = get_data.get_data(query.format(RoundNumber=RoundNumber))
     if RoundNumber == 21:
