@@ -1,27 +1,9 @@
-import pandas as pd
 import dash
-from dash import Dash, dcc, html
+from dash import Dash
 import dash_bootstrap_components as dbc
-from dash.dependencies import Output, Input
 
-# from .components import event_title
-# from .components import weather
 
-# from .components import driver_career
-# from .components import driver_perf_this_season
-# from .components import driver_profile
-# from .components import driver_standing
-# from .components import interesting_fact
-# from .components import lap_time_comparison
 from .components import navbar
-# from .components import position_comparison
-# from .components import prediction_vs_actual_table
-
-# from .components import prediction_vs_actual_top3
-# from .components import team_standing
-# from .components import track_info
-# from .components import track_perf
-# from .components import tyre_strategy
 
 app = Dash(
     __package__,

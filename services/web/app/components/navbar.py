@@ -9,7 +9,7 @@ event_picker = html.Div(
     children=[
         dbc.Row(
             children=[
-                html.H5(children=("Select Event")),
+                html.H5(children=("Select Grand Prix")),
                 dcc.Dropdown(
                     id="RoundNumber_dropdown",
                     value=1,
@@ -47,7 +47,7 @@ rain_picker = html.Div(
     children=[
         dbc.Row(
             children=[
-                html.H5(children=("Track Rain")),
+                html.H5(children=("Track Rain Conditions")),
                 dcc.Dropdown(
                     id="rain_dropdown",
                     options=[
@@ -76,6 +76,20 @@ def make_layout():
             interval,
             dbc.NavbarSimple(
                 children=[
+                    dbc.Nav(
+                        dbc.DropdownMenu(
+                            children=[
+                                dbc.DropdownMenuItem("Dashboards", header=True),
+                                dbc.DropdownMenuItem("Grand Prix Summary", href="/"),
+                                dbc.DropdownMenuItem("Driver Summary", href="/driver"),
+                                dbc.DropdownMenuItem("Season Summary", href="/season"),
+                            ],
+                            nav=True,
+                            in_navbar=True,
+                            label="Select Dashboard",
+                            direction="start",
+                        ),
+                    ),
                     dbc.Col(
                         children=[
                             dbc.Row(children=[event_picker]),
@@ -83,22 +97,9 @@ def make_layout():
                             dbc.Row(children=[rain_picker]),
                         ]
                     ),
-                    # rain_picker,
-                    dbc.NavItem(dbc.NavLink("Race Summary", href="/")),
-                    dbc.DropdownMenu(
-                        children=[
-                            dbc.DropdownMenuItem("More pages", header=True),
-                            dbc.DropdownMenuItem("Event Summary", href="/"),
-                            dbc.DropdownMenuItem("Driver Summary", href="/driver"),
-                            dbc.DropdownMenuItem("Season Summary", href="/season"),
-                        ],
-                        nav=True,
-                        in_navbar=True,
-                        label="More",
-                    ),
                 ],
                 brand="FormulaWin",
-                brand_href="#",
+                brand_href="/",
                 color="primary",
                 dark=True,
                 fluid=True,
@@ -120,3 +121,18 @@ def event_dropdown_update(n_intervals):
     df = df.rename({"Event": "value", "EventName": "label"}, axis=1)
     df_list = df[["label", "value"]].to_dict(orient="records")
     return df_list
+
+
+@callback(
+    [Output("driver_picker", "options"), Output("driver_picker", "value")],
+    Input("RoundNumber_dropdown", "value"),
+)
+def event_dropdown_update(event):
+    with open("sql/get_event_drivers.sql") as f:
+        query = f.read()
+    df = get_data.get_data(query.format(EventNumber=event))
+    df["label"] = df["ClassifiedPosition"] + ": " + df["FullName"]
+    df = df.rename({"FullName": "value"}, axis=1)
+    df_list = df[["label", "value"]].to_dict(orient="records")
+    value = df.iloc[0]
+    return df_list, value

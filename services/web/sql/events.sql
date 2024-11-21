@@ -1,1 +1,4 @@
-SELECT * FROM "Events"
+SELECT 
+"Event"
+, "EventName" 
+FROM "Events"
