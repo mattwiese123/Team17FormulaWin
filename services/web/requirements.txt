@@ -13,3 +13,4 @@ dash-bootstrap-components
 python-dotenv
 pyclipper
 sqlalchemy
+dash-extensions

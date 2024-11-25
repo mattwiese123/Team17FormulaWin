@@ -1,7 +1,8 @@
 import dash_bootstrap_components as dbc
-from dash import html, dcc, callback, Input, Output
+from dash import html, dcc, callback, Input, Output, no_update
 from util import get_data
 import pandas as pd
+import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 import pyclipper
@@ -15,6 +16,8 @@ telemetry_options = [
 ]
 
 track_graph_driver_dropdown = dcc.Checklist(
+    options=[],
+    value=[],
     id="tv-driver-dropdown",
     inline=True,
 )
@@ -54,7 +57,7 @@ def make_layout():
                                     dcc.Dropdown(
                                         id="telemetry-dropdown",
                                         options=telemetry_options,
-                                        value=telemetry_options[0],
+                                        value=1,
                                         clearable=False,
                                     ),
                                 ]
@@ -67,10 +70,10 @@ def make_layout():
     )
 
 
-# @callback(
-#     Output("selected-driver-label", "children"),
-#     Input("tv-driver-dropdown", "value"),
-# )
+@callback(
+    Output("selected-driver-label", "children"),
+    Input("tv-driver-dropdown", "value"),
+)
 def update_selected_driver_label(value):
     if not value:
         return dbc.Row(children=[html.Span("No driver selected")])
@@ -90,7 +93,7 @@ def update_selected_driver_label(value):
 
 
 @callback(
-    [Output("tv-driver-dropdown", "options")],
+    Output("tv-driver-dropdown", "options"),
     Input("RoundNumber_dropdown", "value"),
 )
 def update_current_event(event):
@@ -99,7 +102,7 @@ def update_current_event(event):
     with open("sql/get_event_drivers_tv.sql") as f:
         query = f.read()
     df = get_data.get_data(query.format(EventNumber=event))
-
+    #
     driver_options = list()
     for driver in df.to_dict(orient="records"):
         driver_name = f"{driver['FullName']}"
@@ -128,143 +131,98 @@ def update_current_event(event):
                 style={"padding": 3, "position": "relative", "text-align": "center"},
             )
         ]
-        driver_options.append(
-            {"label": driver_label_list, "value": driver["DriverNumber"]}
-        )
-
+        driver_options.append({"label": driver_label_list, "value": driver})
+    #
     return driver_options
 
 
+# @callback(
+#     Output("tv-driver-dropdown", "options"),
+#     Input("tv-driver-dropdown", "value"),
+#     Input("tv-driver-dropdown", "options"),
+# )
+def update_multi_options(value, driver_options):
+    if not driver_options:
+        return no_update
+    if not value:
+        return no_update
+
+    if len(value) >= 2:
+        # Disable options not selected
+        return [
+            {
+                "label": opt["label"],
+                "value": opt["value"],
+                "disabled": opt["value"] not in value,
+            }
+            for opt in driver_options
+        ]
+    else:
+        # Enable all options
+        return [
+            {"label": opt["label"], "value": opt["value"], "disabled": False}
+            for opt in driver_options
+        ]
+
+
 @callback(
-    Output("tv-driver-dropdown", "options"),
+    Output("track-graph", "figure"),
     Input("tv-driver-dropdown", "value"),
     Input("tv-driver-dropdown", "options"),
+    Input("telemetry-dropdown", "value"),
+    Input("RoundNumber_dropdown", "value"),
 )
-def update_multi_options(value, driver_options):
-    options = driver_options
-    if not value:
-        return options
-    if len(value) >= 2:
-        options = [
-            {
-                "label": option["label"],
-                "value": option["value"],
-                "disabled": option["value"] not in value,
-            }
-            for option in options
-        ]
-    return options
-
-
-# @callback(
-#     Output("track-graph", "figure"),
-#     Input("tv-driver-dropdown", "value"),
-#     Input("telemetry-dropdown", "value"),
-#     Input("RoundNumber_dropdown", "value"),
-# )
-def update_graph(selected_driver, selected_telemetry, event):
+def update_graph(selected_driver, driver_options, selected_telemetry, event):
+    SCALE_OUT = 20.0
     if not selected_telemetry:
         selected_telemetry = "Speed"
 
-    print(selected_driver)
-    with open("sql/get_event_driver_telemetry.sql") as f:
-        query = f.read()
-    df = get_data.get_data(
-        query.format(EventNumber=event, DriverNumber=selected_driver)
-    )
+    def get_driver_tel_df(event: int, selected_driver_number_list: list):
+        driver_string = "(" + ",".join(selected_driver_number_list) + ")"
+        with open("sql/get_event_driver_telemetry.sql") as f:
+            query = f.read()
+        df = get_data.get_data(
+            query.format(EventNumber=event, DriverNumbers=driver_string)
+        )
+        return df
 
     if not selected_driver:
-        selected_driver = str(drivers[:1])
-        driver_laps = pd.DataFrame.from_dict(
-            current_event[selected_driver], orient="columns"
-        )
+        selected_driver = [str(driver_options[0]["value"]["DriverNumber"])]
+        driver_laps = get_driver_tel_df(event, selected_driver)
         if driver_laps.empty:
             return px.line(title=f"No data available for driver {selected_driver}")
 
-        fig = px.line(
+        fig = px.scatter(
             driver_laps,
             x="X",
             y="Y",
             color="Sector",
-            line_group="Sector",
             title="Track with Sectors",
         )
 
         fig.update_traces(line=dict(width=5))
 
     elif len(selected_driver) == 1:
-        driver_laps = pd.DataFrame.from_dict(
-            current_event[selected_driver], orient="columns"
+        driver_laps = get_driver_tel_df(
+            event, [str(selected_driver[0]["DriverNumber"])]
         )
         if driver_laps.empty:
             return px.line(title=f"No data available for driver {selected_driver}")
 
-        scale_in = -250.0
-        subj = tuple(driver_laps[["X", "Y"]].itertuples(index=False, name=None))
-        pco = pyclipper.PyclipperOffset()
-        pco.AddPath(subj, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
-
-        solution = pco.Execute(scale_in)
-
-        df = pd.DataFrame(solution[0], columns=["X_prime", "Y_prime"])
-
-        # for all points in df, compute min distance
-        df["Original_Row"] = [
-            np.argmin(np.linalg.norm(row - driver_laps[["X", "Y"]], axis=1))
-            for row in df.itertuples(index=False, name=None)
-        ]
-        df[selected_telemetry] = [
-            driver_laps.iloc[n][selected_telemetry] for n in df["Original_Row"]
-        ]
-
-        fig1 = px.line(
+        fig = px.scatter(
             driver_laps,
             x="X",
             y="Y",
-            color="Sector",
-            line_group="Sector",
+            color=selected_telemetry,
+            color_continuous_scale="Pinkyl",
             title=f"Track with Sectors",
         )
 
-        fig2 = px.scatter(
-            df,
-            x="X_prime",
-            y="Y_prime",
-            color=selected_telemetry,
-            color_continuous_scale="Pinkyl",
-            render_mode="webgl",
-        )
+    elif len(selected_driver) >= 2:
+        tel_d1 = get_driver_tel_df(event, [str(selected_driver[0]["DriverNumber"])])
+        tel_d2 = get_driver_tel_df(event, [str(selected_driver[1]["DriverNumber"])])
 
-        fig1.update_traces(line=dict(width=5))
-        fig = go.Figure(data=fig1.data + fig2.data)
-
-    elif len(selected_driver) == 2:
-        tel_d1 = pd.DataFrame.from_dict(
-            current_event[selected_driver], orient="columns"
-        )
-        tel_d2 = pd.DataFrame.from_dict(
-            current_event[selected_driver], orient="columns"
-        )
-
-        scale_in = -250.0
-        subj = tuple(tel_d1[["X", "Y"]].itertuples(index=False, name=None))
-        pco = pyclipper.PyclipperOffset()
-        pco.AddPath(subj, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
-
-        solution = pco.Execute(scale_in)
-
-        df_in = pd.DataFrame(solution[0], columns=["X_prime", "Y_prime"])
-
-        # for all points in df, compute min distance
-        df_in["Original_Row"] = [
-            np.argmin(np.linalg.norm(row - tel_d1[["X", "Y"]], axis=1))
-            for row in df_in.itertuples(index=False, name=None)
-        ]
-        df_in[selected_telemetry] = [
-            tel_d1.iloc[n][selected_telemetry] for n in df_in["Original_Row"]
-        ]
-
-        scale_out = 250.0
+        scale_out = SCALE_OUT
         subj = tuple(tel_d2[["X", "Y"]].itertuples(index=False, name=None))
         pco = pyclipper.PyclipperOffset()
         pco.AddPath(subj, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
@@ -282,25 +240,17 @@ def update_graph(selected_driver, selected_telemetry, event):
             tel_d2.iloc[n][selected_telemetry] for n in df_out["Original_Row"]
         ]
 
-        fig1 = px.line(
+        fig1 = px.scatter(
             tel_d1,
             x="X",
             y="Y",
-            color="Sector",
-            line_group="Sector",
+            color=selected_telemetry,
+            color_continuous_scale="Pinkyl",
+            render_mode="webgl",
             title="Track with Sectors",
         )
 
         fig2 = px.scatter(
-            df_in,
-            x="X_prime",
-            y="Y_prime",
-            color=selected_telemetry,
-            color_continuous_scale="Pinkyl",
-            render_mode="webgl",
-        )
-
-        fig3 = px.scatter(
             df_out,
             x="X_prime",
             y="Y_prime",
@@ -309,8 +259,7 @@ def update_graph(selected_driver, selected_telemetry, event):
             render_mode="webgl",
         )
 
-        fig1.update_traces(line=dict(width=5))
-        fig = go.Figure(data=fig1.data + fig2.data + fig3.data)
+        fig = go.Figure(data=fig1.data + fig2.data)
 
     fig.update_layout(
         xaxis=dict(visible=False),

@@ -71,41 +71,52 @@ interval = dcc.Interval(
 
 
 def make_layout():
-    return dbc.Row(
-        [
-            interval,
-            dbc.NavbarSimple(
-                children=[
-                    dbc.Nav(
-                        dbc.DropdownMenu(
-                            children=[
-                                dbc.DropdownMenuItem("Dashboards", header=True),
-                                dbc.DropdownMenuItem("Grand Prix Summary", href="/"),
-                                dbc.DropdownMenuItem("Driver Summary", href="/driver"),
-                                dbc.DropdownMenuItem("Season Summary", href="/season"),
-                            ],
-                            nav=True,
-                            in_navbar=True,
-                            label="Select Dashboard",
-                            direction="start",
-                        ),
-                    ),
-                    dbc.Col(
+    return html.Div(
+        id="navbar",
+        children=[
+            dbc.Row(
+                [
+                    interval,
+                    dbc.NavbarSimple(
                         children=[
-                            dbc.Row(children=[event_picker]),
-                            dbc.Row(children=[driver_picker]),
-                            dbc.Row(children=[rain_picker]),
-                        ]
+                            dbc.Nav(
+                                dbc.DropdownMenu(
+                                    children=[
+                                        dbc.DropdownMenuItem("Dashboards", header=True),
+                                        dbc.DropdownMenuItem(
+                                            "Grand Prix Summary", href="/"
+                                        ),
+                                        dbc.DropdownMenuItem(
+                                            "Driver Summary", href="/driver"
+                                        ),
+                                        dbc.DropdownMenuItem(
+                                            "Season Summary", href="/season"
+                                        ),
+                                    ],
+                                    nav=True,
+                                    in_navbar=True,
+                                    label="Select Dashboard",
+                                    direction="start",
+                                ),
+                            ),
+                            dbc.Col(
+                                children=[
+                                    dbc.Row(children=[event_picker]),
+                                    dbc.Row(children=[driver_picker]),
+                                    dbc.Row(children=[rain_picker]),
+                                ]
+                            ),
+                        ],
+                        brand="FormulaWin",
+                        brand_href="/",
+                        color="primary",
+                        dark=True,
+                        fluid=True,
+                        expand="xl",
                     ),
-                ],
-                brand="FormulaWin",
-                brand_href="/",
-                color="primary",
-                dark=True,
-                fluid=True,
-                expand="xl",
-            ),
-        ]
+                ]
+            )
+        ],
     )
 
 
