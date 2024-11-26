@@ -23,7 +23,6 @@ def make_layout():
 @callback(
     Output("pred_table", "data"),
     Input("RoundNumber_dropdown", "value"),
-    Input("rain_dropdown", "value"),
 )
 def prediction_vs_actual_table(RoundNumber, has_rain):
     with open("sql/get_pred.sql") as f:
