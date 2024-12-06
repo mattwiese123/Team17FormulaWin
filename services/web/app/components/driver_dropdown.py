@@ -48,7 +48,6 @@ def driver_stats1_func(n_intervals):
     with open("sql/get_driver_stats2.sql") as f:
         query = f.read()
     res = get_data.get_data(query)
-    res = res.sort_values(by=["Position_num"], ascending=True)
     return [
         {"label": f"{row["Position"]} {row["FullName"]}", "value": row["FullName"]}
         for row in res.to_dict(orient="records")

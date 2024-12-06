@@ -62,7 +62,6 @@ SELECT
 	, j."Wins"
 	, j."Championships"
 	, d."Position"
-	, d."Position_num"
 	, pl."Photo"
 	, pl."Country"
 	, pl."Team"
@@ -72,4 +71,4 @@ FROM
 ON pl."FullName" = d."FullName" 
 JOIN joined j 
 ON pl."FullName" = j."FullName"
-
+ORDER BY "Position_num" ASC

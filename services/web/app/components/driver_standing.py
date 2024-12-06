@@ -68,21 +68,42 @@ def update_graph_2(selected_driver):
                             "Championships",
                             "Wins",
                         ],
-                        fill_color=["white", "white", "white", "white", "grey", "grey"],
+                        fill_color=[
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                        ],
                         font=dict(
                             color=[
                                 "black",
                                 "black",
                                 "black",
                                 "black",
-                                "white",
-                                "white",
+                                "black",
+                                "black",
                             ],
-                            size=[12, 12, 12, 12, 26, 26],
+                            size=[18, 18, 18, 18, 18, 18],
                         ),
-                        align=["left", "left", "left", "left", "right", "center"],
+                        align=[
+                            "center",
+                            "center",
+                            "center",
+                            "center",
+                            "center",
+                            "center",
+                        ],
                         height=30,
-                        line_color=["white", "white", "white", "white", "grey", "grey"],
+                        line_color=[
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                        ],
                     ),
                     cells=dict(
                         values=[
@@ -93,29 +114,49 @@ def update_graph_2(selected_driver):
                             [driver_data["Championships"]],
                             [driver_data["Wins"]],
                         ],
-                        fill_color=["white", "white", "white", "white", "grey", "grey"],
+                        fill_color=[
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                        ],
                         font=dict(
                             color=[
                                 "black",
                                 "black",
                                 "black",
                                 "black",
-                                "white",
-                                "white",
+                                "black",
+                                "black",
                             ],
                             size=28,
-                            family="Comic Sans MS",
                         ),
-                        align=["left", "left", "left", "left", "center", "center"],
+                        align=[
+                            "center",
+                            "center",
+                            "center",
+                            "center",
+                            "center",
+                            "center",
+                        ],
                         height=40,
-                        line_color=["white", "white", "white", "white", "grey", "grey"],
+                        line_color=[
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                        ],
                     ),
                 )
             ]
         )
         fig.add_layout_image(
             source=driver_data["Photo"],
-            x=-0.20,
+            x=-0.13,
             y=0.10,  # Ajustar posición de la imagen
             xref="paper",
             yref="paper",
@@ -126,7 +167,7 @@ def update_graph_2(selected_driver):
         )
         fig.update_layout(
             margin=dict(l=250, r=10, t=110, b=10),
-            width=1500,
+            # width=1500,
             height=250,
             paper_bgcolor="white",
         )

@@ -30,7 +30,12 @@ layout = dbc.Container(
                         ),
                         dbc.Row(
                             children=[
-                                driver_standing.make_layout(),
+                                dbc.Col(
+                                    children=[
+                                        driver_standing.make_layout(),
+                                    ],
+                                    className="vis-group",
+                                )
                             ]
                         ),
                     ],
