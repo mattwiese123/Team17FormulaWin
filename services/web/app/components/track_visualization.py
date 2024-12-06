@@ -35,7 +35,7 @@ def make_layout():
                                 children=[
                                     html.Div(
                                         [
-                                            html.Label("Select driver:"),
+                                            html.H5("Select driver:"),
                                             track_graph_driver_dropdown,
                                         ]
                                     ),
@@ -47,7 +47,7 @@ def make_layout():
                         children=[
                             html.Div(
                                 [
-                                    html.Label("Select telemetry:"),
+                                    html.H5("Select telemetry:"),
                                     dcc.Dropdown(
                                         id="telemetry-dropdown",
                                         options=telemetry_options,
@@ -75,15 +75,36 @@ def update_selected_driver_label(value):
         return dbc.Row(children=[html.H5("No driver selected")])
     elif len(value) == 1:
         return dbc.Row(
-            children=[dbc.Col(children=[html.H5(f"Driver 1: {value[0]['FullName']}")])]
+            children=[dbc.Col(children=[html.H5(f"{value[0]['FullName']}")])]
         )
     else:
         return dbc.Row(
             children=[
-                dbc.Col(children=[html.H5(f"Driver 1: {value[0]['FullName']}")]),
-                dbc.Col(children=[html.H5(f"Driver 2: {value[1]['FullName']}")]),
+                dbc.Col(children=[html.H5(f"{value[0]['FullName']}")]),
+                dbc.Col(children=[html.H5(f"{value[1]['FullName']}")]),
             ]
         )
+
+
+# @callback(
+#     Output("tv-driver-dropdown", "options"),
+#     Input("tv-driver-dropdown", "options"),
+#     Input("tv-driver-dropdown", "value"),
+# )
+def tv_driver_dropdown_checkboxes(driver_options, selected_values):
+    if len(selected_values) >= 2:
+        temp_vals = []
+        driver_numbers = [val["DriverNumber"] for val in selected_values]
+        for opt in driver_options:
+            disabled = False
+            if opt["value"]["DriverNumber"] not in driver_numbers:
+                disabled = True
+            temp_vals.append(
+                {"label": opt["label"], "value": opt["value"], "disabled": disabled}
+            )
+        return temp_vals
+    else:
+        return driver_options
 
 
 @callback(
@@ -208,7 +229,7 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             y="Y",
             color=selected_telemetry,
             color_continuous_scale="Pinkyl",
-            title=str(selected_driver[0]["FullName"]),
+            title=None,
             render_mode="webgl",
             hover_data=[selected_telemetry, "DriverNumber"],
         )
@@ -219,7 +240,7 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             y="Y",
             color=selected_telemetry,
             color_continuous_scale="Pinkyl",
-            title=str(selected_driver[1]["FullName"]),
+            title=None,
             render_mode="webgl",
             hover_data=[selected_telemetry, "DriverNumber"],
         )

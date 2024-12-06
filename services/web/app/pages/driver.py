@@ -14,10 +14,31 @@ layout = dbc.Container(
                 navbar_driver.make_layout(),
             ]
         ),
-        dbc.Row(
+        html.Div(
             children=[
-                driver_standing.make_layout(),
-            ]
+                dbc.Container(
+                    children=[
+                        dbc.Row(
+                            children=[
+                                html.H1(
+                                    "F1 Driver Statistics",
+                                    style={
+                                        "textAlign": "center",
+                                    },
+                                ),
+                            ]
+                        ),
+                        dbc.Row(
+                            children=[
+                                driver_standing.make_layout(),
+                            ]
+                        ),
+                    ],
+                    className="home-vis-container",
+                )
+            ],
+            className="home-vis-background",
         ),
-    ]
+    ],
+    className="home-page-background",
 )

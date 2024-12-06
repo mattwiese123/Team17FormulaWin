@@ -48,6 +48,7 @@ CASE
 	WHEN "Position" < 10 THEN '# ' || "Position"::varchar(4)
 	ELSE '#' || "Position"::varchar(4)
 END "Position"
+, "Position" AS "Position_num"
 , "FullName"
 , "Points"
 , "Photo"
@@ -61,6 +62,7 @@ SELECT
 	, j."Wins"
 	, j."Championships"
 	, d."Position"
+	, d."Position_num"
 	, pl."Photo"
 	, pl."Country"
 	, pl."Team"
