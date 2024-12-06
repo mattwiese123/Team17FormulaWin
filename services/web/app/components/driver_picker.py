@@ -8,6 +8,7 @@ def make_layout():
         children=[
             dbc.Row(
                 children=[
+                    html.H1("Compare Driver Performance"),
                     html.H5(children=("Select Drivers")),
                     dcc.Dropdown(
                         id="driver_picker",

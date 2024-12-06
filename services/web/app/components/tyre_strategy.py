@@ -30,6 +30,10 @@ def tyre_strategy(RoundNumber, Drivers):
         hover_name="FullName",
         hover_data=["LapNumber", "Position", "laptime", "Compound", "TyreLife"],
         orientation="h",
+        title="<b>Tyre Strategy</b>",
+    )
+    tyre_fig.update_layout(
+        plot_bgcolor="rgb(229,229,229)", xaxis=dict(rangemode="tozero")
     )
 
     return tyre_fig

@@ -27,10 +27,14 @@ def lap_time_comparison(RoundNumber, Drivers):
         color="FullName",
         hover_name="FullName",
         hover_data=["LapNumber", "Position", "laptime"],
+        title="<b>Lap Time</b>",
     )
     lapTime_fig.update_traces(
         mode="markers+lines",
         # visible="legendonly"
     )
     lapTime_fig.update_yaxes(categoryorder="category descending")
+    lapTime_fig.update_layout(
+        plot_bgcolor="rgb(229,229,229)", xaxis=dict(rangemode="tozero")
+    )
     return lapTime_fig

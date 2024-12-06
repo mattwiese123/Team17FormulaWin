@@ -1,11 +1,13 @@
 import dash_bootstrap_components as dbc
 from util import get_data
 from dash import Input, Output, callback, html
-import pandas as pd
 
 
 def make_layout():
-    return dbc.Col(html.Pre(id="weather"), width={"size": "auto", "order": 1})
+    return dbc.Col(
+        children=[html.H4("Weather"), html.Pre(id="weather")],
+        width={"size": "auto", "order": 1},
+    )
 
 
 @callback(Output("weather", "children"), Input("RoundNumber_dropdown", "value"))
@@ -34,7 +36,7 @@ def weather(RoundNumber):
         )[0]
 
     result = (
-        "air temp: "
+        "  air temp: "
         + str(int(airtemp))
         + "°C    humidity: "
         + str(int(humidity))
@@ -46,6 +48,6 @@ def weather(RoundNumber):
         + str(int(tracktemp))
         + "°C    wind speed: "
         + str(int(windspeed))
-        + "m/s"
+        + "m/s  "
     )
     return result

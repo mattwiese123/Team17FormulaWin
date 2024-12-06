@@ -20,9 +20,6 @@ with Diagram("FormulaWin AWS Infrastructure", show=False, direction="LR"):
 
         db = Postgresql("RDS")
 
-        with Cluster("Pipelines"):
-            ec2_data = EC2("Pipeline/Model Server")
-
     with Cluster("Code Base", direction="LR"):
         gh = Github("")
         # with Cluster("Code Base"):
@@ -38,9 +35,6 @@ with Diagram("FormulaWin AWS Infrastructure", show=False, direction="LR"):
     dns >> ec2_web
     ec2_web >> db
 
-    db << ec2_data
-
     gh - ec2_web
-    gh - ec2_data
 
     users >> dns

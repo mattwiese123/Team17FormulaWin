@@ -1,11 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import html, dcc, callback, Input, Output, no_update
 from util import get_data
-import pandas as pd
-import numpy as np
 import plotly.express as px
-import plotly.graph_objects as go
-import pyclipper
 
 telemetry_options = [
     {"label": "Speed", "value": "Speed"},
@@ -22,7 +18,7 @@ track_graph_driver_dropdown = dcc.Checklist(
     inline=True,
 )
 
-track_graph = dcc.Graph(id="track-graph")
+track_graph = html.Div(id="track-graph")
 
 selected_driver_label = html.Div(id="selected-driver-label")
 
@@ -30,7 +26,7 @@ selected_driver_label = html.Div(id="selected-driver-label")
 def make_layout():
     return dbc.Row(
         children=[
-            dbc.Row(children=[html.H1(children="F1 Track with Segments")]),
+            dbc.Row(children=[html.H1(children="Driver Telemetry")]),
             dbc.Row(
                 children=[
                     dbc.Col(
@@ -51,8 +47,6 @@ def make_layout():
                         children=[
                             html.Div(
                                 [
-                                    selected_driver_label,
-                                    track_graph,
                                     html.Label("Select telemetry:"),
                                     dcc.Dropdown(
                                         id="telemetry-dropdown",
@@ -60,6 +54,8 @@ def make_layout():
                                         value=1,
                                         clearable=False,
                                     ),
+                                    selected_driver_label,
+                                    track_graph,
                                 ]
                             ),
                         ]
@@ -76,18 +72,16 @@ def make_layout():
 )
 def update_selected_driver_label(value):
     if not value:
-        return dbc.Row(children=[html.Span("No driver selected")])
+        return dbc.Row(children=[html.H5("No driver selected")])
     elif len(value) == 1:
         return dbc.Row(
-            children=[
-                dbc.Col(children=[html.Span(f"Inner Driver: {value[0]['FullName']}")])
-            ]
+            children=[dbc.Col(children=[html.H5(f"Driver 1: {value[0]['FullName']}")])]
         )
     else:
         return dbc.Row(
             children=[
-                dbc.Col(children=[html.Span(f"Inner Driver: {value[0]['FullName']}")]),
-                dbc.Col(children=[html.Span(f"Outer Driver: {value[1]['FullName']}")]),
+                dbc.Col(children=[html.H5(f"Driver 1: {value[0]['FullName']}")]),
+                dbc.Col(children=[html.H5(f"Driver 2: {value[1]['FullName']}")]),
             ]
         )
 
@@ -131,49 +125,21 @@ def update_current_event(event):
                 style={"padding": 3, "position": "relative", "text-align": "center"},
             )
         ]
-        driver_options.append({"label": driver_label_list, "value": driver})
+        driver_options.append(
+            {"label": driver_label_list, "value": driver, "disabled": False}
+        )
     #
     return driver_options
 
 
-# @callback(
-#     Output("tv-driver-dropdown", "options"),
-#     Input("tv-driver-dropdown", "value"),
-#     Input("tv-driver-dropdown", "options"),
-# )
-def update_multi_options(value, driver_options):
-    if not driver_options:
-        return no_update
-    if not value:
-        return no_update
-
-    if len(value) >= 2:
-        # Disable options not selected
-        return [
-            {
-                "label": opt["label"],
-                "value": opt["value"],
-                "disabled": opt["value"] not in value,
-            }
-            for opt in driver_options
-        ]
-    else:
-        # Enable all options
-        return [
-            {"label": opt["label"], "value": opt["value"], "disabled": False}
-            for opt in driver_options
-        ]
-
-
 @callback(
-    Output("track-graph", "figure"),
+    Output("track-graph", "children"),
     Input("tv-driver-dropdown", "value"),
     Input("tv-driver-dropdown", "options"),
     Input("telemetry-dropdown", "value"),
     Input("RoundNumber_dropdown", "value"),
 )
 def update_graph(selected_driver, driver_options, selected_telemetry, event):
-    SCALE_OUT = 20.0
     if not selected_telemetry:
         selected_telemetry = "Speed"
 
@@ -219,26 +185,22 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
         )
 
     elif len(selected_driver) >= 2:
+        # tel_df = get_driver_tel_df(
+        #     event,
+        #     [
+        #         str(selected_driver[0]["DriverNumber"]),
+        #         str(selected_driver[1]["DriverNumber"]),
+        #     ],
+        # )
+        # tel_d1 = get_driver_tel_df(event, [str(selected_driver[0]["DriverNumber"])])
+        # tel_d2 = get_driver_tel_df(event, [str(selected_driver[1]["DriverNumber"])])
         tel_d1 = get_driver_tel_df(event, [str(selected_driver[0]["DriverNumber"])])
         tel_d2 = get_driver_tel_df(event, [str(selected_driver[1]["DriverNumber"])])
 
-        scale_out = SCALE_OUT
-        subj = tuple(tel_d2[["X", "Y"]].itertuples(index=False, name=None))
-        pco = pyclipper.PyclipperOffset()
-        pco.AddPath(subj, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
-
-        solution = pco.Execute(scale_out)
-
-        df_out = pd.DataFrame(solution[0], columns=["X_prime", "Y_prime"])
-
-        # for all points in df, compute min distance
-        df_out["Original_Row"] = [
-            np.argmin(np.linalg.norm(row - tel_d2[["X", "Y"]], axis=1))
-            for row in df_out.itertuples(index=False, name=None)
-        ]
-        df_out[selected_telemetry] = [
-            tel_d2.iloc[n][selected_telemetry] for n in df_out["Original_Row"]
-        ]
+        x_min = tel_d2["X"].min()
+        x_max = tel_d2["X"].max()
+        x_width = x_max - x_min
+        tel_d2["X"] = tel_d2["X"] + 1.75 * x_width
 
         fig1 = px.scatter(
             tel_d1,
@@ -246,30 +208,61 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             y="Y",
             color=selected_telemetry,
             color_continuous_scale="Pinkyl",
+            title=str(selected_driver[0]["FullName"]),
             render_mode="webgl",
-            title="Track with Sectors",
+            hover_data=[selected_telemetry, "DriverNumber"],
         )
 
         fig2 = px.scatter(
-            df_out,
-            x="X_prime",
-            y="Y_prime",
+            tel_d2,
+            x="X",
+            y="Y",
             color=selected_telemetry,
             color_continuous_scale="Pinkyl",
+            title=str(selected_driver[1]["FullName"]),
             render_mode="webgl",
+            hover_data=[selected_telemetry, "DriverNumber"],
         )
 
-        fig = go.Figure(data=fig1.data + fig2.data)
+        fig1.update_layout(
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
+            plot_bgcolor="rgb(229,229,229)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            showlegend=False,
+            margin=dict(l=0, r=0, t=0, b=0),
+        )
+        fig1.update_yaxes(scaleanchor="x", scaleratio=1)
+        fig1.update_coloraxes(showscale=False)
+
+        fig2.update_layout(
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
+            plot_bgcolor="rgb(229,229,229)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            # showlegend=False,
+            margin=dict(l=0, r=0, t=0, b=0),
+        )
+        fig2.update_yaxes(scaleanchor="x", scaleratio=1)
+
+        return [
+            dbc.Row(
+                children=[
+                    dbc.Col(dcc.Graph(figure=fig1)),
+                    dbc.Col(dcc.Graph(figure=fig2)),
+                ]
+            )
+        ]
+        # fig = go.Figure(data=fig1.data + fig2.data)
 
     fig.update_layout(
         xaxis=dict(visible=False),
         yaxis=dict(visible=False),
-        plot_bgcolor="rgba(0,0,0,1)",
+        plot_bgcolor="rgb(229,229,229)",
         paper_bgcolor="rgba(0,0,0,0)",
         showlegend=False,
         margin=dict(l=0, r=0, t=0, b=0),
     )
 
     fig.update_yaxes(scaleanchor="x", scaleratio=1)
-
-    return fig
+    return [dcc.Graph(figure=fig)]
