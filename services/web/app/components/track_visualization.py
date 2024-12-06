@@ -11,11 +11,14 @@ telemetry_options = [
     {"label": "Brake", "value": "Brake"},
 ]
 
-track_graph_driver_dropdown = dcc.Checklist(
-    options=[],
-    value=[],
-    id="tv-driver-dropdown",
-    inline=True,
+track_graph_driver_dropdown = html.Div(
+    children=[
+        dcc.Checklist(
+            id="tv-driver-dropdown",
+            inline=True,
+        )
+    ],
+    id="driver-dropdown-div",
 )
 
 track_graph = html.Div(id="track-graph")
@@ -86,12 +89,17 @@ def update_selected_driver_label(value):
         )
 
 
-# @callback(
-#     Output("tv-driver-dropdown", "options"),
-#     Input("tv-driver-dropdown", "options"),
-#     Input("tv-driver-dropdown", "value"),
-# )
+@callback(
+    Output("tv-driver-dropdown", "options"),
+    Input("tv-driver-dropdown", "options"),
+    Input("tv-driver-dropdown", "value"),
+)
 def tv_driver_dropdown_checkboxes(driver_options, selected_values):
+    if not driver_options:
+        return no_update
+    if not selected_values:
+        return no_update
+
     if len(selected_values) >= 2:
         temp_vals = []
         driver_numbers = [val["DriverNumber"] for val in selected_values]
@@ -104,11 +112,14 @@ def tv_driver_dropdown_checkboxes(driver_options, selected_values):
             )
         return temp_vals
     else:
-        return driver_options
+        return [
+            {"label": opt["label"], "value": opt["value"], "disabled": False}
+            for opt in driver_options
+        ]
 
 
 @callback(
-    Output("tv-driver-dropdown", "options"),
+    Output("driver-dropdown-div", "children"),
     Input("RoundNumber_dropdown", "value"),
 )
 def update_current_event(event):
@@ -150,7 +161,14 @@ def update_current_event(event):
             {"label": driver_label_list, "value": driver, "disabled": False}
         )
     #
-    return driver_options
+    children = [
+        dcc.Checklist(
+            options=driver_options,
+            id="tv-driver-dropdown",
+            inline=True,
+        )
+    ]
+    return children
 
 
 @callback(
@@ -163,6 +181,8 @@ def update_current_event(event):
 def update_graph(selected_driver, driver_options, selected_telemetry, event):
     if not selected_telemetry:
         selected_telemetry = "Speed"
+    if not driver_options:
+        return no_update
 
     def get_driver_tel_df(event: int, selected_driver_number_list: list):
         driver_string = "(" + ",".join(selected_driver_number_list) + ")"
