@@ -28,7 +28,7 @@
   font-weight: bold !important;
 }
 
-.custom-navbar span {
+.custom-navbar .navbar-brand {
   color: rgb(255, 255, 255) !important;
 }
 
@@ -48,6 +48,11 @@
   margin-left: 2em !important;
   padding-left: 2em !important;
   font-size: 1em !important;
+}
+
+
+.navbar-nav .Select-value-label {
+  color: rgb(0, 0, 0) !important;
 }
 
 body {

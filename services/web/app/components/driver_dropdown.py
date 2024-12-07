@@ -16,13 +16,12 @@ driver_dropdown = html.Div(
                         ),
                         dcc.Dropdown(
                             id="driver-dropdown",
-                            options=[],
                             value="Lewis Hamilton",  # Valor inicial
                             placeholder="Select a driver",
                         ),
                     ],
                     className="event-picker col-ms-md-auto",
-                    style={"min-width": "300px"},
+                    style={"min-width": "300px", "color": "black"},
                 ),
             ],
         ),

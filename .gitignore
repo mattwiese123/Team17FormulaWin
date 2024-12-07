@@ -5,3 +5,5 @@ data/
 tofu.plan
 .ipynb_checkpoints/
 .env
+logo.svg
+output.png

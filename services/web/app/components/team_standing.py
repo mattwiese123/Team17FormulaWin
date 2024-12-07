@@ -73,10 +73,9 @@ def make_layout():
         [
             # Título general
             html.H1(
-                "F1 Standings",
+                "2024 F1 Season Standings",
                 style={
                     "text-align": "center",  # Alineado a la izquierda
-                    "font-family": "Arial, sans-serif",
                     "margin-bottom": "20px",
                     "margin-left": "-80px",  # Separación desde el borde izquierdo
                     "color": "black",
@@ -95,6 +94,7 @@ def make_layout():
                                     dbc.Col(
                                         html.H1(
                                             children=["Teams"],
+                                            style={"text-align": "center"},
                                         ),
                                     ),
                                     dbc.Col(),
@@ -118,6 +118,7 @@ def make_layout():
                                     dbc.Col(
                                         html.H1(
                                             children=["Drivers"],
+                                            style={"text-align": "center"},
                                         ),
                                     ),
                                     dbc.Col(),

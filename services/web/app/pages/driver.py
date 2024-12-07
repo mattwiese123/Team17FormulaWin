@@ -20,24 +20,32 @@ layout = dbc.Container(
                     children=[
                         dbc.Row(
                             children=[
-                                html.H1(
-                                    "F1 Driver Statistics",
-                                    style={
-                                        "textAlign": "center",
-                                    },
+                                dbc.Row(
+                                    children=[
+                                        dbc.Col(
+                                            [
+                                                html.H1(
+                                                    "2024 F1 Driver Statistics",
+                                                    style={
+                                                        "textAlign": "center",
+                                                    },
+                                                ),
+                                            ]
+                                        )
+                                    ]
+                                ),
+                                dbc.Row(
+                                    children=[
+                                        dbc.Col(
+                                            children=[
+                                                driver_standing.make_layout(),
+                                            ],
+                                            className="vis-group",
+                                        )
+                                    ]
                                 ),
                             ]
-                        ),
-                        dbc.Row(
-                            children=[
-                                dbc.Col(
-                                    children=[
-                                        driver_standing.make_layout(),
-                                    ],
-                                    className="vis-group",
-                                )
-                            ]
-                        ),
+                        )
                     ],
                     className="home-vis-container",
                 )
