@@ -37,9 +37,11 @@ def update_pred_v_t3_info(event):
         # FullName, TeamName, PredPos, ActualPosition, Logo, HeadshotUrl
         driver_options = list()
         driver_options.append(html.H1(children=[title], style={"text-align": "center"}))
-        for driver in df.to_dict(orient="records"):
+        for i, driver in enumerate(df.to_dict(orient="records")):
             driver_name = f"{driver['FullName']}"
-            driver_position = f"{driver[position_col]}"
+            driver_position = (
+                f"{driver[position_col]}" if driver[position_col] else f"{i+1}"
+            )
             driver_label_list = html.Div(
                 children=[
                     html.Div(

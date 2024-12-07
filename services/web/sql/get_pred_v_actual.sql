@@ -14,3 +14,4 @@ FROM
 WHERE
 	p."RoundNumber" = {EventNumber}
 	AND d."Event" = {EventNumber}
+  AND p."has_rain_R" = 'false'
