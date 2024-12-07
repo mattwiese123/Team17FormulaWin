@@ -10,3 +10,7 @@ fastf1
 gunicorn
 psycopg2-binary
 dash-bootstrap-components
+python-dotenv
+pyclipper
+sqlalchemy
+dash-extensions

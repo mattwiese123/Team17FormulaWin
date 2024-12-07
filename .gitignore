@@ -4,3 +4,4 @@ data/
 *.tfstate*
 tofu.plan
 .ipynb_checkpoints/
+.env

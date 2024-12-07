@@ -1,13 +1,20 @@
 from sqlalchemy import create_engine
 import pandas as pd
 
+import os
+
+
 def get_data(query):
-    host= "capstone-database.cxy4yu8cqqaj.us-east-1.rds.amazonaws.com"
-    port= "5432"
-    user= "fwin_readonly"
-    password= "Capstone_F1_8522"
-    dbname= "postgres"
-    engine = create_engine('postgresql://{}:{}@{}:{}/{}'.format(user, password, host, port, dbname))
+    PGHOST = os.getenv("PGHOST")
+    PGPORT = os.getenv("PGPORT")
+    PGUSER = os.getenv("PGUSER")
+    PGPASSWORD = os.getenv("PGPASSWORD")
+    PGDBNAME = os.getenv("PGDBNAME")
+    engine = create_engine(
+        "postgresql://{}:{}@{}:{}/{}".format(
+            PGUSER, PGPASSWORD, PGHOST, PGPORT, PGDBNAME
+        )
+    )
     df = pd.read_sql_query(query, engine)
     return df
 
