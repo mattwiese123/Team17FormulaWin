@@ -33,9 +33,9 @@ CASE
 	WHEN "Position" < 10 THEN '# ' || "Position"::varchar(4)
 	ELSE '#' || "Position"::varchar(4)
 END "Position"
-, "FullName"
+, '<img src="' || "Photo" || '" style="height: 100px; width:100px;"/>' AS "Photo"
+, "FullName" AS "Full Name"
 , "Points"
-, "Photo"
 , "Country"
 , "Team"
 FROM

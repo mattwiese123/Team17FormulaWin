@@ -15,10 +15,27 @@ layout = dbc.Container(
                 navbar_season.make_layout(),
             ]
         ),
-        dbc.Row(
-            children=[
-                team_standing.make_layout(),
-            ]
+        html.Div(
+            [
+                dbc.Container(
+                    [
+                        dbc.Col(
+                            [
+                                dbc.Row(
+                                    children=[
+                                        team_standing.make_layout(),
+                                    ]
+                                )
+                            ],
+                            className="vis-group",
+                        )
+                    ],
+                    className="home-vis-container",
+                ),
+            ],
+            className="home-vis-background",
         ),
-    ]
+    ],
+    #     fluid=True,
+    className="home-page-background",
 )

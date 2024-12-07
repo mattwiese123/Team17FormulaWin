@@ -6,39 +6,58 @@ def make_layout():
     return html.Div(
         id="navbar",
         children=[
-            dbc.Row(
-                [
-                    dbc.NavbarSimple(
-                        children=[
-                            dbc.Nav(
-                                dbc.DropdownMenu(
-                                    children=[
-                                        dbc.DropdownMenuItem("Dashboards", header=True),
-                                        dbc.DropdownMenuItem(
-                                            "Grand Prix Summary", href="/"
+            dbc.Navbar(
+                dbc.Container(
+                    children=[
+                        html.A(
+                            dbc.Row(
+                                [
+                                    dbc.Col(html.Img(src="", height="30px")),
+                                    dbc.Col(
+                                        dbc.NavbarBrand("FormulaWin", className="ms-2")
+                                    ),
+                                ],
+                                align="center",
+                                className="g-0",
+                            ),
+                            href="/",
+                            style={"textDecoration": "none"},
+                        ),
+                        dbc.Row(
+                            [
+                                dbc.Nav(
+                                    [
+                                        dbc.NavItem(
+                                            dbc.NavLink(
+                                                "Grand Prix Summary",
+                                                href="/",
+                                            ),
+                                            className="page-navigation",
                                         ),
-                                        dbc.DropdownMenuItem(
-                                            "Driver Summary", href="/driver"
+                                        dbc.NavItem(
+                                            dbc.NavLink(
+                                                "Driver Summary",
+                                                href="/driver",
+                                            ),
+                                            className="page-navigation",
                                         ),
-                                        dbc.DropdownMenuItem(
-                                            "Season Summary", href="/season"
+                                        dbc.NavItem(
+                                            dbc.NavLink(
+                                                "Season Summary",
+                                                href="/season",
+                                            ),
+                                            className="page-navigation",
                                         ),
                                     ],
-                                    nav=True,
-                                    in_navbar=True,
-                                    label="Select Dashboard",
-                                    direction="start",
-                                ),
-                            ),
-                        ],
-                        brand="FormulaWin",
-                        brand_href="/",
-                        color="primary",
-                        dark=True,
-                        fluid=True,
-                        expand="xl",
-                    ),
-                ]
-            )
+                                    className="mx-auto",
+                                )
+                            ],
+                        ),
+                        dbc.Row(),
+                    ],
+                    fluid=True,
+                ),
+                className="custom-navbar",
+            ),
         ],
     )

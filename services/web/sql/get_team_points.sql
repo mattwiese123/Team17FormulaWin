@@ -32,9 +32,9 @@ CASE
 	WHEN "Position" < 10 THEN '# ' || "Position"::varchar(4)
 	ELSE '#' || "Position"::varchar(4)
 END "Position"
-, "TeamName"
+, '<img src="' || "Logo" || '" style="height: 100px; width:175px;"/>' AS "Logo"
+, "TeamName" AS "Team Name"
 , "Points"
-, "Logo"
 , "Country"
 FROM
 joined
