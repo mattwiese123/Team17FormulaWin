@@ -75,10 +75,14 @@ def update_pred_v_t3_info(event):
                             )
                         ],
                     ),
-                    html.Br(),
                     html.Span(
                         driver_name,
-                        style={"font-size": 15, "padding": 5, "color": "black"},
+                        style={
+                            "font-size": 24,
+                            "color": "black",
+                            "font-weight": "bold",
+                            "padding-top": "-0.5em",
+                        },
                     ),
                 ],
                 style={

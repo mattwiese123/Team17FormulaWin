@@ -9,7 +9,7 @@ def make_layout():
             style_as_list_view=True,
             style_cell={"padding": "2px", "textAlign": "center"},
             page_action="none",
-            style_table={"height": "650px", "overflowY": "auto"},
+            style_table={"height": "650px", "overflowY": "auto", "margin-top": "0.5em"},
             style_header={"backgroundColor": "white", "fontWeight": "bold"},
         ),
     )

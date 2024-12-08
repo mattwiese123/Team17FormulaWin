@@ -34,6 +34,7 @@ def position_comparison(RoundNumber, Drivers):
         hover_name="FullName",
         hover_data=["LapNumber", "Position", "laptime"],
         title="<b>Position</b>",
+        render_mode="webgl",
     )
     position_fig.update_traces(
         mode="markers+lines",

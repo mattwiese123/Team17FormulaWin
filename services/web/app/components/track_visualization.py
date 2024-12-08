@@ -38,7 +38,7 @@ def make_layout():
                                 children=[
                                     html.Div(
                                         [
-                                            html.H5("Select driver:"),
+                                            html.H5("Select up to 2 drivers:"),
                                             track_graph_driver_dropdown,
                                         ]
                                     ),
@@ -67,26 +67,6 @@ def make_layout():
             ),
         ]
     )
-
-
-# @callback(
-#     Output("selected-driver-label", "children"),
-#     Input("tv-driver-dropdown", "value"),
-# )
-def update_selected_driver_label(value):
-    if not value:
-        return dbc.Row(children=[html.H5("No driver selected")])
-    elif len(value) == 1:
-        return dbc.Row(
-            children=[dbc.Col(children=[html.H5(f"{value[0]['FullName']}")])]
-        )
-    else:
-        return dbc.Row(
-            children=[
-                dbc.Col(children=[html.H5(f"{value[0]['FullName']}")]),
-                dbc.Col(children=[html.H5(f"{value[1]['FullName']}")]),
-            ]
-        )
 
 
 @callback(
@@ -204,6 +184,7 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             y="Y",
             color="Sector",
             title="Track with Sectors",
+            render_mode="scattergl",
         )
 
         fig.update_traces(line=dict(width=5))
@@ -235,6 +216,7 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             color=selected_telemetry,
             color_continuous_scale="Pinkyl",
             title=f"Track with Sectors",
+            render_mode="scattergl",
         )
 
         fig.update_layout(
@@ -276,7 +258,7 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             color=selected_telemetry,
             color_continuous_scale="Pinkyl",
             title=None,
-            render_mode="webgl",
+            render_mode="scattergl",
             hover_data=[selected_telemetry, "DriverNumber"],
         )
 
@@ -287,7 +269,7 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             color=selected_telemetry,
             color_continuous_scale="Pinkyl",
             title=None,
-            render_mode="webgl",
+            render_mode="scattergl",
             hover_data=[selected_telemetry, "DriverNumber"],
         )
 

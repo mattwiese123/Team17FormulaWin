@@ -28,6 +28,7 @@ def lap_time_comparison(RoundNumber, Drivers):
         hover_name="FullName",
         hover_data=["LapNumber", "Position", "laptime"],
         title="<b>Lap Time</b>",
+        render_mode="webgl",
     )
     lapTime_fig.update_traces(
         mode="markers+lines",

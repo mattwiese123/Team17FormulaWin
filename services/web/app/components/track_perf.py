@@ -20,7 +20,14 @@ def make_layout():
                 children=[
                     dbc.Col(
                         children=[
-                            dbc.Row(children=[html.H3(children="Track Information")]),
+                            dbc.Row(
+                                children=[
+                                    html.H3(
+                                        children="Track Information",
+                                        style={"padding-top": "0.5em"},
+                                    )
+                                ]
+                            ),
                             dbc.Row(children=[track_information]),
                         ],
                         style={"width": "40%"},
@@ -87,11 +94,7 @@ def update_event_graph(event):
     driver_laps = get_driver_tel_df(event)
 
     fig = px.scatter(
-        driver_laps,
-        x="X",
-        y="Y",
-        color="Sector",
-        title=None,
+        driver_laps, x="X", y="Y", color="Sector", title=None, render_mode="scattergl"
     )
 
     fig.update_traces(line=dict(width=5))
@@ -103,9 +106,6 @@ def update_event_graph(event):
         paper_bgcolor="rgba(229,229,229,0)",
         showlegend=False,
         margin=dict(l=5, r=5, t=5, b=5),
-        # autosize=False,
-        # width="200px",
-        # height="200px",
     )
 
     fig.update_yaxes(scaleanchor="x", scaleratio=1)

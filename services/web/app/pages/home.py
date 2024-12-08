@@ -51,6 +51,16 @@ layout = dbc.Container(
                                             [prediction_vs_actual_top3.make_layout()]
                                         ),
                                         dbc.Row(
+                                            children=[
+                                                html.Div(
+                                                    style={
+                                                        "margin": "1em",
+                                                        "padding": "1em",
+                                                    }
+                                                )
+                                            ]
+                                        ),
+                                        dbc.Row(
                                             prediction_vs_actual_table.make_layout()
                                         ),
                                     ],

@@ -16,3 +16,4 @@ sqlalchemy
 dash-extensions
 gevent
 dash-bootstrap-components[pandas]
+orjson

@@ -14,7 +14,11 @@ def make_layout():
                                 [
                                     dbc.Col(html.Img(src="", height="30px")),
                                     dbc.Col(
-                                        dbc.NavbarBrand("FormulaWin", className="ms-2")
+                                        dbc.NavbarBrand(
+                                            "FormulaWin",
+                                            className="ms-2",
+                                            style={"font-size": "1.75em"},
+                                        )
                                     ),
                                 ],
                                 align="center",
