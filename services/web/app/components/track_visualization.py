@@ -115,43 +115,101 @@ def tv_driver_dropdown_checkboxes(driver_options, selected_values):
 )
 def update_current_event(event):
     if not event:
-        return [{"label": "hello", "value": 1}]
+        return [{"label": "", "value": 1}]
     with open("sql/get_event_drivers_tv.sql") as f:
         query = f.read()
     df = get_data.get_data(query.format(EventNumber=event))
-    #
     driver_options = list()
-    for driver in df.to_dict(orient="records"):
-        driver_name = f"{driver['FullName']}"
-        driver_position = f"{driver['ClassifiedPosition']}"
-        driver_label_list = [
-            html.Div(
-                children=[
-                    html.Img(src=driver["HeadshotUrl"], style={"padding": 5}),
-                    html.Div(
-                        driver_position,
-                        style={
-                            "font-size": 32,
-                            "position": "absolute",
-                            "top": "1px",
-                            "left": "2px",
-                            "color": "white",
-                            "text-shadow": "-1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black",
-                        },
-                    ),
-                    html.Br(),
-                    html.Span(
-                        driver_name,
-                        style={"font-size": 15, "padding": 5, "color": "black"},
-                    ),
-                ],
-                style={"padding": 3, "position": "relative", "text-align": "center"},
+
+    if event < 21:
+        for driver in df.to_dict(orient="records"):
+            driver_name = f"{driver['FullName']}"
+            driver_position = f"{driver['ClassifiedPosition']}"
+            driver_label_list = [
+                html.Div(
+                    children=[
+                        html.Img(
+                            src=driver["HeadshotUrl"]
+                            if driver["HeadshotUrl"]
+                            else "/assets/icons8-formula-1.svg",
+                            style={
+                                "padding": 5,
+                                "width": "100px",
+                                "height": "100px",
+                            },
+                        ),
+                        html.Div(
+                            driver_position,
+                            style={
+                                "font-size": 32,
+                                "position": "absolute",
+                                "top": "1px",
+                                "left": "2px",
+                                "color": "white",
+                                "text-shadow": "-1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black",
+                            },
+                        ),
+                        html.Br(),
+                        html.Span(
+                            driver_name,
+                            style={"font-size": 15, "padding": 5, "color": "black"},
+                        ),
+                    ],
+                    style={
+                        "padding": 3,
+                        "position": "relative",
+                        "text-align": "center",
+                    },
+                )
+            ]
+            driver_options.append(
+                {"label": driver_label_list, "value": driver, "disabled": False}
             )
-        ]
-        driver_options.append(
-            {"label": driver_label_list, "value": driver, "disabled": False}
-        )
-    #
+    else:
+        for driver in df.to_dict(orient="records"):
+            driver_name = f"{driver['FullName']}"
+            driver_position = f"{driver['ClassifiedPosition']}"
+            driver_label_list = [
+                html.Div(
+                    children=[
+                        html.Img(
+                            src=driver["HeadshotUrl"]
+                            if driver["HeadshotUrl"]
+                            else "/assets/icons8-formula-1.svg",
+                            style={
+                                "padding": 5,
+                                "width": "100px",
+                                "height": "100px",
+                            },
+                        ),
+                        html.Div(
+                            " ",
+                            style={
+                                "font-size": 32,
+                                "position": "absolute",
+                                "top": "1px",
+                                "left": "2px",
+                                "color": "white",
+                                "text-shadow": "-1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black",
+                            },
+                        ),
+                        html.Br(),
+                        html.Span(
+                            driver_name,
+                            style={"font-size": 15, "padding": 5, "color": "black"},
+                        ),
+                    ],
+                    style={
+                        "padding": 3,
+                        "position": "relative",
+                        "text-align": "center",
+                    },
+                )
+            ]
+            driver_options.append(
+                {"label": driver_label_list, "value": driver, "disabled": False}
+            )
+
     children = [
         dcc.Checklist(
             options=driver_options,
@@ -194,7 +252,7 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
         )
         return df
 
-    if not selected_driver:
+    if not selected_driver or event >= 21:
         selected_driver = [str(1)]
         driver_string = "(" + ",".join(selected_driver) + ")"
         with open("sql/get_event_plot.sql") as f:
@@ -226,9 +284,13 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
         )
 
         fig.update_yaxes(scaleanchor="x", scaleratio=1)
-        return [dcc.Graph(figure=fig)], dbc.Row(
-            children=[html.H5("No driver selected")]
+        selected_return = (
+            dbc.Row(children=[html.H5("No driver selected")])
+            if event < 21
+            else dbc.Row([html.H5("No data for São Paulo Grand Prix")])
         )
+
+        return [dcc.Graph(figure=fig)], selected_return
 
     elif len(selected_driver) == 1:
         driver_laps = get_driver_tel_df(
