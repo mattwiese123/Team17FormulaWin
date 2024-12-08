@@ -52,8 +52,7 @@ def update_event_info(event):
     with open("sql/get_track_metadata.sql") as f:
         query = f.read()
     track_df = get_data.get_data(query.format(EventNumber=event))
-
-    columns_format = [dict(id="index", name=""), dict(id=f"{int(event) - 1}", name="")]
+    columns_format = [dict(id="index", name=""), dict(id="0", name="")]
     return [
         dash_table.DataTable(
             markdown_options={"html": True},
