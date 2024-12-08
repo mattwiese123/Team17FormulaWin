@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 import pandas as pd
+
 import os
 
 
@@ -16,3 +17,4 @@ def get_data(query):
     )
     df = pd.read_sql_query(query, engine)
     return df
+

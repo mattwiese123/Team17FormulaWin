@@ -1,0 +1,41 @@
+FullName,TeamName,year,RoundNumber,Position_Q,Q1_Q,Q2_Q,Q3_Q,has_rain_Q,Country,Location,EventFormat,Q1_Q_Rank,Q2_Q_Rank,Q3_Q_Rank,DriverPointsBefore,TeamPointsBefore,has_rain_R
+Alexander Albon,Williams,2024,21,7,89.072,85.889,84.657,1.0,Brazil,São Paulo,sprint_qualifying,2.0,5.0,7.0,12.0,17.0,True
+Carlos Sainz,Ferrari,2024,21,14,90.303,89.406,89.406,1.0,Brazil,São Paulo,sprint_qualifying,11.0,14.0,99.0,221.0,499.0,True
+Charles Leclerc,Ferrari,2024,21,6,89.839,86.097,84.525,1.0,Brazil,São Paulo,sprint_qualifying,7.0,6.0,6.0,272.0,499.0,True
+Esteban Ocon,Alpine,2024,21,4,89.171,86.206,84.475,1.0,Brazil,São Paulo,sprint_qualifying,4.0,7.0,4.0,5.0,14.0,True
+Fernando Alonso,Aston Martin,2024,21,9,90.207,85.035,88.998,1.0,Brazil,São Paulo,sprint_qualifying,10.0,2.0,9.0,62.0,86.0,True
+Franco Colapinto,Williams,2024,21,18,91.27,91.27,91.27,1.0,Brazil,São Paulo,sprint_qualifying,18.0,99.0,99.0,5.0,17.0,True
+George Russell,Mercedes,2024,21,2,89.121,86.307,83.578,1.0,Brazil,São Paulo,sprint_qualifying,3.0,8.0,2.0,167.0,343.0,True
+Guanyu Zhou,Kick Sauber,2024,21,20,92.263,92.263,92.263,1.0,Brazil,São Paulo,sprint_qualifying,20.0,99.0,99.0,0.0,0.0,True
+Lance Stroll,Aston Martin,2024,21,10,90.58,86.334,86.334,1.0,Brazil,São Paulo,sprint_qualifying,12.0,9.0,99.0,24.0,86.0,True
+Lando Norris,McLaren,2024,21,1,90.944,84.844,83.405,1.0,Brazil,São Paulo,sprint_qualifying,15.0,1.0,1.0,300.0,539.0,True
+Lewis Hamilton,Mercedes,2024,21,16,91.15,91.15,91.15,1.0,Brazil,São Paulo,sprint_qualifying,16.0,99.0,99.0,176.0,355.0,True
+Liam Lawson,RB,2024,21,5,90.758,85.654,84.484,1.0,Brazil,São Paulo,sprint_qualifying,14.0,4.0,5.0,2.0,30.0,True
+Max Verstappen,Red Bull Racing,2024,21,12,88.522,87.771,87.771,1.0,Brazil,São Paulo,sprint_qualifying,1.0,12.0,99.0,330.0,467.0,True
+Nico Hulkenberg,Haas F1 Team,2024,21,19,91.623,91.623,91.623,1.0,Brazil,São Paulo,sprint_qualifying,19.0,99.0,99.0,28.0,41.0,True
+Oliver Bearman,Haas F1 Team,2024,21,17,91.229,91.229,91.229,1.0,Brazil,São Paulo,sprint_qualifying,17.0,99.0,99.0,7.0,41.0,True
+Oscar Piastri,McLaren,2024,21,8,90.114,85.179,84.686,1.0,Brazil,São Paulo,sprint_qualifying,9.0,3.0,8.0,239.0,547.0,True
+Pierre Gasly,Alpine,2024,21,15,89.42,89.614,89.614,1.0,Brazil,São Paulo,sprint_qualifying,6.0,15.0,99.0,9.0,32.0,True
+Sergio Perez,Red Bull Racing,2024,21,13,90.035,88.158,88.158,1.0,Brazil,São Paulo,sprint_qualifying,8.0,13.0,99.0,137.0,493.0,True
+Valtteri Bottas,Kick Sauber,2024,21,11,90.633,86.472,86.472,1.0,Brazil,São Paulo,sprint_qualifying,13.0,11.0,99.0,0.0,0.0,True
+Yuki Tsunoda,RB,2024,21,3,89.172,86.464,84.111,1.0,Brazil,São Paulo,sprint_qualifying,5.0,10.0,3.0,21.0,32.0,True
+Alexander Albon,Williams,2024,21,7,89.072,85.889,84.657,1.0,Brazil,São Paulo,sprint_qualifying,2.0,5.0,7.0,12.0,17.0,False
+Carlos Sainz,Ferrari,2024,21,14,90.303,89.406,89.406,1.0,Brazil,São Paulo,sprint_qualifying,11.0,14.0,99.0,221.0,499.0,False
+Charles Leclerc,Ferrari,2024,21,6,89.839,86.097,84.525,1.0,Brazil,São Paulo,sprint_qualifying,7.0,6.0,6.0,272.0,499.0,False
+Esteban Ocon,Alpine,2024,21,4,89.171,86.206,84.475,1.0,Brazil,São Paulo,sprint_qualifying,4.0,7.0,4.0,5.0,14.0,False
+Fernando Alonso,Aston Martin,2024,21,9,90.207,85.035,88.998,1.0,Brazil,São Paulo,sprint_qualifying,10.0,2.0,9.0,62.0,86.0,False
+Franco Colapinto,Williams,2024,21,18,91.27,91.27,91.27,1.0,Brazil,São Paulo,sprint_qualifying,18.0,99.0,99.0,5.0,17.0,False
+George Russell,Mercedes,2024,21,2,89.121,86.307,83.578,1.0,Brazil,São Paulo,sprint_qualifying,3.0,8.0,2.0,167.0,343.0,False
+Guanyu Zhou,Kick Sauber,2024,21,20,92.263,92.263,92.263,1.0,Brazil,São Paulo,sprint_qualifying,20.0,99.0,99.0,0.0,0.0,False
+Lance Stroll,Aston Martin,2024,21,10,90.58,86.334,86.334,1.0,Brazil,São Paulo,sprint_qualifying,12.0,9.0,99.0,24.0,86.0,False
+Lando Norris,McLaren,2024,21,1,90.944,84.844,83.405,1.0,Brazil,São Paulo,sprint_qualifying,15.0,1.0,1.0,300.0,539.0,False
+Lewis Hamilton,Mercedes,2024,21,16,91.15,91.15,91.15,1.0,Brazil,São Paulo,sprint_qualifying,16.0,99.0,99.0,176.0,355.0,False
+Liam Lawson,RB,2024,21,5,90.758,85.654,84.484,1.0,Brazil,São Paulo,sprint_qualifying,14.0,4.0,5.0,2.0,30.0,False
+Max Verstappen,Red Bull Racing,2024,21,12,88.522,87.771,87.771,1.0,Brazil,São Paulo,sprint_qualifying,1.0,12.0,99.0,330.0,467.0,False
+Nico Hulkenberg,Haas F1 Team,2024,21,19,91.623,91.623,91.623,1.0,Brazil,São Paulo,sprint_qualifying,19.0,99.0,99.0,28.0,41.0,False
+Oliver Bearman,Haas F1 Team,2024,21,17,91.229,91.229,91.229,1.0,Brazil,São Paulo,sprint_qualifying,17.0,99.0,99.0,7.0,41.0,False
+Oscar Piastri,McLaren,2024,21,8,90.114,85.179,84.686,1.0,Brazil,São Paulo,sprint_qualifying,9.0,3.0,8.0,239.0,547.0,False
+Pierre Gasly,Alpine,2024,21,15,89.42,89.614,89.614,1.0,Brazil,São Paulo,sprint_qualifying,6.0,15.0,99.0,9.0,32.0,False
+Sergio Perez,Red Bull Racing,2024,21,13,90.035,88.158,88.158,1.0,Brazil,São Paulo,sprint_qualifying,8.0,13.0,99.0,137.0,493.0,False
+Valtteri Bottas,Kick Sauber,2024,21,11,90.633,86.472,86.472,1.0,Brazil,São Paulo,sprint_qualifying,13.0,11.0,99.0,0.0,0.0,False
+Yuki Tsunoda,RB,2024,21,3,89.172,86.464,84.111,1.0,Brazil,São Paulo,sprint_qualifying,5.0,10.0,3.0,21.0,32.0,False
