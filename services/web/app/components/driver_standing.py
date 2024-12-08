@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
-from dash import callback, dcc, html, Input, Output, no_update
+from dash import callback, dcc, html, Input, Output, no_update, dash_table
 from util import get_data
+import dash_bootstrap_components as dbc
 
 
 def driver_stats1_func():
@@ -38,10 +39,11 @@ def make_layout():
             dcc.Graph(
                 id="driver-stats-graph-2",
             ),
-            dcc.Graph(
+            dbc.Row(
                 id="driver-stats-table",
             ),
-        ]
+        ],
+        style={"marin": "0.15em", "padding": "0.15em"},
     )
 
 
@@ -175,28 +177,28 @@ def update_graph_2(selected_driver):
 
 
 # Callback para actualizar el tercer gráfico
-@callback(Output("driver-stats-table", "figure"), [Input("driver-dropdown", "value")])
+@callback(Output("driver-stats-table", "children"), [Input("driver-dropdown", "value")])
 def update_table(selected_driver):
     driver_data = driver_stats3[driver_stats3["FullName"] == selected_driver].drop(
         columns=["FullName"]
     )
-    fig = go.Figure(
-        data=[
-            go.Table(
-                header=dict(
-                    values=["<b>" + col + "</b>" for col in driver_data.columns],
-                    fill_color="black",
-                    font=dict(color="white", size=14),
-                    align="center",
-                ),
-                cells=dict(
-                    values=[driver_data[col].values for col in driver_data.columns],
-                    fill_color="white",
-                    font=dict(color="black", size=12),
-                    align="center",
-                ),
-            )
-        ]
+    return dash_table.DataTable(
+        markdown_options={"html": True},
+        data=driver_data.to_dict(orient="records"),
+        # columns=columns_format,
+        style_as_list_view=True,
+        style_table={
+            "margin": "0.25em",
+            "padding": "0.25em",
+        },
+        style_header={
+            "background-color": "black",
+            "color": "white",
+            "padding": "0.15em",
+            "margin": "0.15em",
+            "text-align": "left",
+        },
+        style_cell_conditional=[
+            {"if": {"column_id": c}, "textAlign": "left"} for c in driver_data.columns
+        ],
     )
-    fig.update_layout(paper_bgcolor="white")  # , width=1600, height=400)
-    return fig

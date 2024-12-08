@@ -23,21 +23,13 @@ layout = dbc.Container(
                                 dbc.Row(
                                     children=[
                                         dbc.Col(
-                                            [
+                                            children=[
                                                 html.H1(
                                                     "2024 F1 Driver Statistics",
                                                     style={
                                                         "textAlign": "left",
                                                     },
                                                 ),
-                                            ]
-                                        )
-                                    ]
-                                ),
-                                dbc.Row(
-                                    children=[
-                                        dbc.Col(
-                                            children=[
                                                 driver_standing.make_layout(),
                                             ],
                                             className="vis-group",
