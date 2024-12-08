@@ -1,11 +1,11 @@
 import dash_bootstrap_components as dbc
 from dash import html, dcc, callback, Input, Output, dash_table
-import pandas as pd
 import plotly.express as px
 from util import get_data
 
 event_track_graph = dcc.Loading(
-    children=[dcc.Graph(id="event-track-graph")], type="circle"
+    children=[dcc.Graph(id="event-track-graph", style={"height": "450px"})],
+    type="circle",
 )
 
 track_information = dbc.Col(id="track-information")
@@ -22,12 +22,14 @@ def make_layout():
                         children=[
                             dbc.Row(children=[html.H3(children="Track Information")]),
                             dbc.Row(children=[track_information]),
-                        ]
+                        ],
+                        style={"width": "40%"},
                     ),
                     dbc.Col(
                         children=[
-                            dbc.Row(children=[event_track_graph]),
-                        ]
+                            event_track_graph,
+                        ],
+                        style={"width": "60%"},
                     ),
                 ],
             ),
@@ -52,6 +54,9 @@ def update_event_info(event):
     with open("sql/get_track_metadata.sql") as f:
         query = f.read()
     track_df = get_data.get_data(query.format(EventNumber=event))
+    track_df["Direction"] = track_df["Direction"].str.replace(
+        "Part clockwise and part anti-clockwise (figure eight)", "Figure eight"
+    )
     columns_format = [dict(id="index", name=""), dict(id="0", name="")]
     return [
         dash_table.DataTable(
@@ -98,6 +103,9 @@ def update_event_graph(event):
         paper_bgcolor="rgba(229,229,229,0)",
         showlegend=False,
         margin=dict(l=5, r=5, t=5, b=5),
+        # autosize=False,
+        # width="200px",
+        # height="200px",
     )
 
     fig.update_yaxes(scaleanchor="x", scaleratio=1)
