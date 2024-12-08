@@ -10,6 +10,7 @@ telemetry_options = [
     {"label": "Throttle", "value": "Throttle"},
     {"label": "Brake", "value": "Brake"},
 ]
+telemetry_types = [x["label"] for x in telemetry_options]
 
 track_graph_driver_dropdown = html.Div(
     children=[
@@ -56,6 +57,16 @@ def make_layout():
                                         options=telemetry_options,
                                         value="Speed",
                                         clearable=False,
+                                    ),
+                                    dbc.Row(
+                                        children=[
+                                            html.Div(
+                                                style={
+                                                    "margin": "0.35em",
+                                                    "padding": "0.35em",
+                                                }
+                                            )
+                                        ]
                                     ),
                                     selected_driver_label,
                                     track_graph,
@@ -163,6 +174,17 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
     if not selected_telemetry:
         selected_telemetry = "Speed"
 
+    hover_dict = {
+        "X": False,
+        "Y": False,
+        "Driver": True,
+        "Speed": True,
+        "nGear": True,
+        "RPM": True,
+        "Throttle": True,
+        "Brake": True,
+    }
+
     def get_driver_tel_df(event: int, selected_driver_number_list: list):
         driver_string = "(" + ",".join(selected_driver_number_list) + ")"
         with open("sql/get_event_driver_telemetry.sql") as f:
@@ -173,7 +195,7 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
         return df
 
     if not selected_driver:
-        selected_driver = [str(driver_options[0]["value"]["DriverNumber"])]
+        selected_driver = [str(1)]
         driver_laps = get_driver_tel_df(event, selected_driver)
         if driver_laps.empty:
             return px.line(title=f"No data available for driver {selected_driver}")
@@ -207,7 +229,12 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             event, [str(selected_driver[0]["DriverNumber"])]
         )
         if driver_laps.empty:
-            return px.line(title=f"No data available for driver {selected_driver}")
+            fig = px.line(title=f"No data available for driver {selected_driver}")
+            return [dcc.Graph(figure=fig)], dbc.Row(
+                children=[
+                    dbc.Col(children=[html.H5(f"{selected_driver[0]['FullName']}")])
+                ]
+            )
 
         fig = px.scatter(
             driver_laps,
@@ -215,8 +242,9 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             y="Y",
             color=selected_telemetry,
             color_continuous_scale="Pinkyl",
-            title=f"Track with Sectors",
+            title="Track with Sectors",
             render_mode="scattergl",
+            hover_data=hover_dict,
         )
 
         fig.update_layout(
@@ -234,22 +262,8 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
         )
 
     elif len(selected_driver) >= 2:
-        # tel_df = get_driver_tel_df(
-        #     event,
-        #     [
-        #         str(selected_driver[0]["DriverNumber"]),
-        #         str(selected_driver[1]["DriverNumber"]),
-        #     ],
-        # )
-        # tel_d1 = get_driver_tel_df(event, [str(selected_driver[0]["DriverNumber"])])
-        # tel_d2 = get_driver_tel_df(event, [str(selected_driver[1]["DriverNumber"])])
         tel_d1 = get_driver_tel_df(event, [str(selected_driver[0]["DriverNumber"])])
         tel_d2 = get_driver_tel_df(event, [str(selected_driver[1]["DriverNumber"])])
-
-        x_min = tel_d2["X"].min()
-        x_max = tel_d2["X"].max()
-        x_width = x_max - x_min
-        tel_d2["X"] = tel_d2["X"] + 1.75 * x_width
 
         fig1 = px.scatter(
             tel_d1,
@@ -259,7 +273,7 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             color_continuous_scale="Pinkyl",
             title=None,
             render_mode="scattergl",
-            hover_data=[selected_telemetry, "DriverNumber"],
+            hover_data=hover_dict,
         )
 
         fig2 = px.scatter(
@@ -270,7 +284,7 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             color_continuous_scale="Pinkyl",
             title=None,
             render_mode="scattergl",
-            hover_data=[selected_telemetry, "DriverNumber"],
+            hover_data=hover_dict,
         )
 
         fig1.update_layout(
@@ -289,7 +303,6 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             yaxis=dict(visible=False),
             plot_bgcolor="rgb(229,229,229)",
             paper_bgcolor="rgba(0,0,0,0)",
-            # showlegend=False,
             margin=dict(l=0, r=0, t=0, b=0),
         )
         fig2.update_yaxes(scaleanchor="x", scaleratio=1)
