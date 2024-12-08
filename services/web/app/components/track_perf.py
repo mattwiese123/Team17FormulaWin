@@ -84,7 +84,7 @@ def update_event_info(event):
 def update_event_graph(event):
     def get_driver_tel_df(event: int):
         driver_string = "(" + ",".join([str(1)]) + ")"
-        with open("sql/get_event_driver_telemetry.sql") as f:
+        with open("sql/get_event_plot.sql") as f:
             query = f.read()
         df = get_data.get_data(
             query.format(EventNumber=event, DriverNumbers=driver_string)
@@ -94,7 +94,13 @@ def update_event_graph(event):
     driver_laps = get_driver_tel_df(event)
 
     fig = px.scatter(
-        driver_laps, x="X", y="Y", color="Sector", title=None, render_mode="scattergl"
+        driver_laps,
+        x="X",
+        y="Y",
+        color="Sector",
+        title=None,
+        render_mode="scattergl",
+        hover_data={"X": False, "Y": False, "Sector": True},
     )
 
     fig.update_traces(line=dict(width=5))

@@ -3,13 +3,9 @@ from dash import Dash
 import dash_bootstrap_components as dbc
 
 
-# banner red : (225, 6, 0)
-# font white : (255, 255, 255)
-
 app = Dash(
     __package__,
     external_stylesheets=[
-        # dbc.themes.JOURNAL,
         dbc.themes.BOOTSTRAP,
         "/usr/src/app/assets/style.css",
     ],
@@ -22,7 +18,6 @@ app.layout = dbc.Container(
     children=[
         dash.page_container,
     ],
-    #  fluid=True,
     className="page-background",
 )
 

@@ -196,7 +196,12 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
 
     if not selected_driver:
         selected_driver = [str(1)]
-        driver_laps = get_driver_tel_df(event, selected_driver)
+        driver_string = "(" + ",".join(selected_driver) + ")"
+        with open("sql/get_event_plot.sql") as f:
+            query = f.read()
+        driver_laps = get_data.get_data(
+            query.format(EventNumber=event, DriverNumbers=driver_string)
+        )
         if driver_laps.empty:
             return px.line(title=f"No data available for driver {selected_driver}")
 
@@ -207,6 +212,7 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             color="Sector",
             title="Track with Sectors",
             render_mode="scattergl",
+            hover_data={"X": False, "Y": False, "Sector": True},
         )
 
         fig.update_traces(line=dict(width=5))
@@ -235,6 +241,8 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
                     dbc.Col(children=[html.H5(f"{selected_driver[0]['FullName']}")])
                 ]
             )
+        # Not in sql for performance reasons
+        driver_laps["Driver"] = selected_driver[0]["FullName"]
 
         fig = px.scatter(
             driver_laps,
@@ -262,8 +270,21 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
         )
 
     elif len(selected_driver) >= 2:
-        tel_d1 = get_driver_tel_df(event, [str(selected_driver[0]["DriverNumber"])])
-        tel_d2 = get_driver_tel_df(event, [str(selected_driver[1]["DriverNumber"])])
+        tel = get_driver_tel_df(
+            event,
+            [
+                str(selected_driver[0]["DriverNumber"]),
+                str(selected_driver[1]["DriverNumber"]),
+            ],
+        )
+        tel_d1 = tel[tel["DriverNumber"] == selected_driver[0]["DriverNumber"]]
+        tel_d2 = tel[tel["DriverNumber"] == selected_driver[1]["DriverNumber"]]
+
+        # tel_d1 = get_driver_tel_df(event, [str(selected_driver[0]["DriverNumber"])])
+        # tel_d2 = get_driver_tel_df(event, [str(selected_driver[1]["DriverNumber"])])
+
+        tel_d1.loc[:, "Driver"] = selected_driver[0]["FullName"]
+        tel_d2.loc[:, "Driver"] = selected_driver[1]["FullName"]
 
         fig1 = px.scatter(
             tel_d1,

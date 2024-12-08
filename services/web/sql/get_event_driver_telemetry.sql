@@ -1,19 +1,16 @@
-SELECT
-t."X"
-, t."Y"
-, t."RPM"
-, t."Speed"
-, t."nGear"
-, t."Throttle"
-, t."Brake"
-, t."Sector"
-, t."Event"
-, t."DriverNumber"
-, d."FullName" AS "Driver"
-FROM "Telemetry" t
-JOIN "Driver_Info" d
-ON t."DriverNumber" = d."DriverNumber"
+SELECT 
+"X"
+, "Y"
+, "RPM"
+, "Speed"
+, "nGear"
+, "Throttle"
+, "Brake"
+, "Sector"
+, "Event"
+, "DriverNumber"
+FROM "Telemetry"
 WHERE 
-t."Event" = {EventNumber}
-AND t."DriverNumber" IN {DriverNumbers}
+"Event" = {EventNumber}
+AND "DriverNumber" IN {DriverNumbers}
 
