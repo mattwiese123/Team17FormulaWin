@@ -7,13 +7,22 @@ event_picker = html.Div(
     children=[
         dbc.Row(
             children=[
-                html.H5(children=("Select Grand Prix")),
-                dcc.Dropdown(
-                    id="RoundNumber_dropdown",
-                    value=1,
+                dbc.Col(
+                    children=[
+                        html.H5(
+                            children=["Select Grand Prix"],
+                            style={"textDecoration": "none"},
+                            className="event-picker-header",
+                        ),
+                        dcc.Dropdown(
+                            id="RoundNumber_dropdown",
+                            value=1,
+                        ),
+                    ],
+                    className="event-picker col-ms-md-auto",
+                    style={"min-width": "300px"},
                 ),
             ],
-            align="center",
         ),
     ],
 )
@@ -27,7 +36,7 @@ interval = dcc.Interval(
 
 
 def make_layout():
-    return html.Div(children=[interval, event_picker])
+    return dbc.Col(children=[interval, event_picker])
 
 
 @callback(
@@ -37,7 +46,7 @@ def event_dropdown_update(n_intervals):
     with open("sql/events.sql") as f:
         query = f.read()
     df = get_data.get_data(query)
-    df = df[df["Event"] < 21]
+    df = df[df["Event"] < 22]
     df["EventName"] = df["Event"].astype(str) + ": " + df["EventName"]
     df = df.rename({"Event": "value", "EventName": "label"}, axis=1)
     df_list = df[["label", "value"]].to_dict(orient="records")

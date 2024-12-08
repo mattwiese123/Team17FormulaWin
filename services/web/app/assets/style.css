@@ -1,0 +1,77 @@
+.custom-navbar {
+  background-color: rgb(225, 6, 0) !important;
+  color: rgb(255, 255, 255) !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: "Duran", sans-serif;
+}
+
+.navbar-expand-md .navbar-nav .nav-link {
+  padding-right: 0.75em;
+  padding-left: 0.75em;
+}
+
+.page-navigation a {
+  color: rgb(255, 255, 255) !important;
+  font-weight: bold !important;
+  font-family: "Duran", sans-serif;
+}
+
+.event-picker {
+  color: rgb(0,0,0) !important;
+  font-weight: bold !important;
+}
+
+.event-picker-header {
+  color: rgb(255, 255, 255) !important;
+  font-weight: bold !important;
+}
+
+.custom-navbar .navbar-brand {
+  color: rgb(255, 255, 255) !important;
+}
+
+.page-background {
+  max-width: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.home-page-background {
+  max-width: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.fun-fact-list {
+  margin-left: 2em !important;
+  padding-left: 2em !important;
+  font-size: 1.5em !important;
+}
+
+
+.navbar-nav .Select-value-label {
+  color: rgb(0, 0, 0) !important;
+}
+
+body {
+  background-color: rgb(229, 229, 229) !important;
+}
+
+.home-vis-background {
+  background-color: rgb(229, 229, 229) !important;
+}
+
+.home-vis-container {
+  max-width: none !important;
+}
+
+.vis-group {
+  background-color: rgb(255,255,255) !important;
+  padding-left: 0.25em !important;
+  padding-right: 0.25em !important;
+  padding-top: 0.25em !important;
+  padding-bottom: 0.25em !important;
+  margin: 0.75em !important;
+}

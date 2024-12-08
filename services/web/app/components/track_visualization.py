@@ -1,11 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import html, dcc, callback, Input, Output, no_update
 from util import get_data
-import pandas as pd
-import numpy as np
 import plotly.express as px
-import plotly.graph_objects as go
-import pyclipper
 
 telemetry_options = [
     {"label": "Speed", "value": "Speed"},
@@ -14,15 +10,19 @@ telemetry_options = [
     {"label": "Throttle", "value": "Throttle"},
     {"label": "Brake", "value": "Brake"},
 ]
+telemetry_types = [x["label"] for x in telemetry_options]
 
-track_graph_driver_dropdown = dcc.Checklist(
-    options=[],
-    value=[],
-    id="tv-driver-dropdown",
-    inline=True,
+track_graph_driver_dropdown = html.Div(
+    children=[
+        dcc.Checklist(
+            id="tv-driver-dropdown",
+            inline=True,
+        )
+    ],
+    id="driver-dropdown-div",
 )
 
-track_graph = dcc.Graph(id="track-graph")
+track_graph = html.Div(id="track-graph")
 
 selected_driver_label = html.Div(id="selected-driver-label")
 
@@ -30,7 +30,7 @@ selected_driver_label = html.Div(id="selected-driver-label")
 def make_layout():
     return dbc.Row(
         children=[
-            dbc.Row(children=[html.H1(children="F1 Track with Segments")]),
+            dbc.Row(children=[html.H1(children="Driver Telemetry")]),
             dbc.Row(
                 children=[
                     dbc.Col(
@@ -39,7 +39,7 @@ def make_layout():
                                 children=[
                                     html.Div(
                                         [
-                                            html.Label("Select driver:"),
+                                            html.H5("Select up to 2 drivers:"),
                                             track_graph_driver_dropdown,
                                         ]
                                     ),
@@ -51,15 +51,25 @@ def make_layout():
                         children=[
                             html.Div(
                                 [
-                                    selected_driver_label,
-                                    track_graph,
-                                    html.Label("Select telemetry:"),
+                                    html.H5("Select telemetry:"),
                                     dcc.Dropdown(
                                         id="telemetry-dropdown",
                                         options=telemetry_options,
-                                        value=1,
+                                        value="Speed",
                                         clearable=False,
                                     ),
+                                    dbc.Row(
+                                        children=[
+                                            html.Div(
+                                                style={
+                                                    "margin": "0.35em",
+                                                    "padding": "0.35em",
+                                                }
+                                            )
+                                        ]
+                                    ),
+                                    selected_driver_label,
+                                    track_graph,
                                 ]
                             ),
                         ]
@@ -71,94 +81,28 @@ def make_layout():
 
 
 @callback(
-    Output("selected-driver-label", "children"),
+    Output("tv-driver-dropdown", "options"),
+    Input("tv-driver-dropdown", "options"),
     Input("tv-driver-dropdown", "value"),
 )
-def update_selected_driver_label(value):
-    if not value:
-        return dbc.Row(children=[html.Span("No driver selected")])
-    elif len(value) == 1:
-        return dbc.Row(
-            children=[
-                dbc.Col(children=[html.Span(f"Inner Driver: {value[0]['FullName']}")])
-            ]
-        )
-    else:
-        return dbc.Row(
-            children=[
-                dbc.Col(children=[html.Span(f"Inner Driver: {value[0]['FullName']}")]),
-                dbc.Col(children=[html.Span(f"Outer Driver: {value[1]['FullName']}")]),
-            ]
-        )
-
-
-@callback(
-    Output("tv-driver-dropdown", "options"),
-    Input("RoundNumber_dropdown", "value"),
-)
-def update_current_event(event):
-    if not event:
-        return [{"label": "hello", "value": 1}]
-    with open("sql/get_event_drivers_tv.sql") as f:
-        query = f.read()
-    df = get_data.get_data(query.format(EventNumber=event))
-    #
-    driver_options = list()
-    for driver in df.to_dict(orient="records"):
-        driver_name = f"{driver['FullName']}"
-        driver_position = f"{driver['ClassifiedPosition']}"
-        driver_label_list = [
-            html.Div(
-                children=[
-                    html.Img(src=driver["HeadshotUrl"], style={"padding": 5}),
-                    html.Div(
-                        driver_position,
-                        style={
-                            "font-size": 32,
-                            "position": "absolute",
-                            "top": "1px",
-                            "left": "2px",
-                            "color": "white",
-                            "text-shadow": "-1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black",
-                        },
-                    ),
-                    html.Br(),
-                    html.Span(
-                        driver_name,
-                        style={"font-size": 15, "padding": 5, "color": "black"},
-                    ),
-                ],
-                style={"padding": 3, "position": "relative", "text-align": "center"},
-            )
-        ]
-        driver_options.append({"label": driver_label_list, "value": driver})
-    #
-    return driver_options
-
-
-# @callback(
-#     Output("tv-driver-dropdown", "options"),
-#     Input("tv-driver-dropdown", "value"),
-#     Input("tv-driver-dropdown", "options"),
-# )
-def update_multi_options(value, driver_options):
+def tv_driver_dropdown_checkboxes(driver_options, selected_values):
     if not driver_options:
         return no_update
-    if not value:
+    if not selected_values:
         return no_update
 
-    if len(value) >= 2:
-        # Disable options not selected
-        return [
-            {
-                "label": opt["label"],
-                "value": opt["value"],
-                "disabled": opt["value"] not in value,
-            }
-            for opt in driver_options
-        ]
+    if len(selected_values) >= 2:
+        temp_vals = []
+        driver_numbers = [val["DriverNumber"] for val in selected_values]
+        for opt in driver_options:
+            disabled = False
+            if opt["value"]["DriverNumber"] not in driver_numbers:
+                disabled = True
+            temp_vals.append(
+                {"label": opt["label"], "value": opt["value"], "disabled": disabled}
+            )
+        return temp_vals
     else:
-        # Enable all options
         return [
             {"label": opt["label"], "value": opt["value"], "disabled": False}
             for opt in driver_options
@@ -166,16 +110,138 @@ def update_multi_options(value, driver_options):
 
 
 @callback(
-    Output("track-graph", "figure"),
+    Output("driver-dropdown-div", "children"),
+    Input("RoundNumber_dropdown", "value"),
+)
+def update_current_event(event):
+    if not event:
+        return [{"label": "", "value": 1}]
+    with open("sql/get_event_drivers_tv.sql") as f:
+        query = f.read()
+    df = get_data.get_data(query.format(EventNumber=event))
+    driver_options = list()
+
+    if event < 21:
+        for driver in df.to_dict(orient="records"):
+            driver_name = f"{driver['FullName']}"
+            driver_position = f"{driver['ClassifiedPosition']}"
+            driver_label_list = [
+                html.Div(
+                    children=[
+                        html.Img(
+                            src=driver["HeadshotUrl"]
+                            if driver["HeadshotUrl"]
+                            else "/assets/icons8-formula-1.svg",
+                            style={
+                                "padding": 5,
+                                "width": "100px",
+                                "height": "100px",
+                            },
+                        ),
+                        html.Div(
+                            driver_position,
+                            style={
+                                "font-size": 32,
+                                "position": "absolute",
+                                "top": "1px",
+                                "left": "2px",
+                                "color": "white",
+                                "text-shadow": "-1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black",
+                            },
+                        ),
+                        html.Br(),
+                        html.Span(
+                            driver_name,
+                            style={"font-size": 15, "padding": 5, "color": "black"},
+                        ),
+                    ],
+                    style={
+                        "padding": 3,
+                        "position": "relative",
+                        "text-align": "center",
+                    },
+                )
+            ]
+            driver_options.append(
+                {"label": driver_label_list, "value": driver, "disabled": False}
+            )
+    else:
+        for driver in df.to_dict(orient="records"):
+            driver_name = f"{driver['FullName']}"
+            driver_position = f"{driver['ClassifiedPosition']}"
+            driver_label_list = [
+                html.Div(
+                    children=[
+                        html.Img(
+                            src=driver["HeadshotUrl"]
+                            if driver["HeadshotUrl"]
+                            else "/assets/icons8-formula-1.svg",
+                            style={
+                                "padding": 5,
+                                "width": "100px",
+                                "height": "100px",
+                            },
+                        ),
+                        html.Div(
+                            " ",
+                            style={
+                                "font-size": 32,
+                                "position": "absolute",
+                                "top": "1px",
+                                "left": "2px",
+                                "color": "white",
+                                "text-shadow": "-1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black",
+                            },
+                        ),
+                        html.Br(),
+                        html.Span(
+                            driver_name,
+                            style={"font-size": 15, "padding": 5, "color": "black"},
+                        ),
+                    ],
+                    style={
+                        "padding": 3,
+                        "position": "relative",
+                        "text-align": "center",
+                    },
+                )
+            ]
+            driver_options.append(
+                {"label": driver_label_list, "value": driver, "disabled": False}
+            )
+
+    children = [
+        dcc.Checklist(
+            options=driver_options,
+            id="tv-driver-dropdown",
+            inline=True,
+        )
+    ]
+    return children
+
+
+@callback(
+    Output("track-graph", "children"),
+    Output("selected-driver-label", "children"),
     Input("tv-driver-dropdown", "value"),
     Input("tv-driver-dropdown", "options"),
     Input("telemetry-dropdown", "value"),
     Input("RoundNumber_dropdown", "value"),
 )
 def update_graph(selected_driver, driver_options, selected_telemetry, event):
-    SCALE_OUT = 20.0
     if not selected_telemetry:
         selected_telemetry = "Speed"
+
+    hover_dict = {
+        "X": False,
+        "Y": False,
+        "Driver": True,
+        "Speed": True,
+        "nGear": True,
+        "RPM": True,
+        "Throttle": True,
+        "Brake": True,
+    }
 
     def get_driver_tel_df(event: int, selected_driver_number_list: list):
         driver_string = "(" + ",".join(selected_driver_number_list) + ")"
@@ -186,9 +252,14 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
         )
         return df
 
-    if not selected_driver:
-        selected_driver = [str(driver_options[0]["value"]["DriverNumber"])]
-        driver_laps = get_driver_tel_df(event, selected_driver)
+    if not selected_driver or event >= 21:
+        selected_driver = [str(1)]
+        driver_string = "(" + ",".join(selected_driver) + ")"
+        with open("sql/get_event_plot.sql") as f:
+            query = f.read()
+        driver_laps = get_data.get_data(
+            query.format(EventNumber=event, DriverNumbers=driver_string)
+        )
         if driver_laps.empty:
             return px.line(title=f"No data available for driver {selected_driver}")
 
@@ -198,16 +269,42 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             y="Y",
             color="Sector",
             title="Track with Sectors",
+            render_mode="scattergl",
+            hover_data={"X": False, "Y": False, "Sector": True},
         )
 
         fig.update_traces(line=dict(width=5))
+        fig.update_layout(
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
+            plot_bgcolor="rgb(229,229,229)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            showlegend=False,
+            margin=dict(l=0, r=0, t=0, b=0),
+        )
+
+        fig.update_yaxes(scaleanchor="x", scaleratio=1)
+        selected_return = (
+            dbc.Row(children=[html.H5("No driver selected")])
+            if event < 21
+            else dbc.Row([html.H5("No data for São Paulo Grand Prix")])
+        )
+
+        return [dcc.Graph(figure=fig)], selected_return
 
     elif len(selected_driver) == 1:
         driver_laps = get_driver_tel_df(
             event, [str(selected_driver[0]["DriverNumber"])]
         )
         if driver_laps.empty:
-            return px.line(title=f"No data available for driver {selected_driver}")
+            fig = px.line(title=f"No data available for driver {selected_driver}")
+            return [dcc.Graph(figure=fig)], dbc.Row(
+                children=[
+                    dbc.Col(children=[html.H5(f"{selected_driver[0]['FullName']}")])
+                ]
+            )
+        # Not in sql for performance reasons
+        driver_laps["Driver"] = selected_driver[0]["FullName"]
 
         fig = px.scatter(
             driver_laps,
@@ -215,30 +312,41 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             y="Y",
             color=selected_telemetry,
             color_continuous_scale="Pinkyl",
-            title=f"Track with Sectors",
+            title="Track with Sectors",
+            render_mode="scattergl",
+            hover_data=hover_dict,
+        )
+
+        fig.update_layout(
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
+            plot_bgcolor="rgb(229,229,229)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            showlegend=False,
+            margin=dict(l=0, r=0, t=0, b=0),
+        )
+
+        fig.update_yaxes(scaleanchor="x", scaleratio=1)
+        return [dcc.Graph(figure=fig)], dbc.Row(
+            children=[dbc.Col(children=[html.H5(f"{selected_driver[0]['FullName']}")])]
         )
 
     elif len(selected_driver) >= 2:
-        tel_d1 = get_driver_tel_df(event, [str(selected_driver[0]["DriverNumber"])])
-        tel_d2 = get_driver_tel_df(event, [str(selected_driver[1]["DriverNumber"])])
+        tel = get_driver_tel_df(
+            event,
+            [
+                str(selected_driver[0]["DriverNumber"]),
+                str(selected_driver[1]["DriverNumber"]),
+            ],
+        )
+        tel_d1 = tel[tel["DriverNumber"] == selected_driver[0]["DriverNumber"]]
+        tel_d2 = tel[tel["DriverNumber"] == selected_driver[1]["DriverNumber"]]
 
-        scale_out = SCALE_OUT
-        subj = tuple(tel_d2[["X", "Y"]].itertuples(index=False, name=None))
-        pco = pyclipper.PyclipperOffset()
-        pco.AddPath(subj, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
+        # tel_d1 = get_driver_tel_df(event, [str(selected_driver[0]["DriverNumber"])])
+        # tel_d2 = get_driver_tel_df(event, [str(selected_driver[1]["DriverNumber"])])
 
-        solution = pco.Execute(scale_out)
-
-        df_out = pd.DataFrame(solution[0], columns=["X_prime", "Y_prime"])
-
-        # for all points in df, compute min distance
-        df_out["Original_Row"] = [
-            np.argmin(np.linalg.norm(row - tel_d2[["X", "Y"]], axis=1))
-            for row in df_out.itertuples(index=False, name=None)
-        ]
-        df_out[selected_telemetry] = [
-            tel_d2.iloc[n][selected_telemetry] for n in df_out["Original_Row"]
-        ]
+        tel_d1.loc[:, "Driver"] = selected_driver[0]["FullName"]
+        tel_d2.loc[:, "Driver"] = selected_driver[1]["FullName"]
 
         fig1 = px.scatter(
             tel_d1,
@@ -246,30 +354,52 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             y="Y",
             color=selected_telemetry,
             color_continuous_scale="Pinkyl",
-            render_mode="webgl",
-            title="Track with Sectors",
+            title=None,
+            render_mode="scattergl",
+            hover_data=hover_dict,
         )
 
         fig2 = px.scatter(
-            df_out,
-            x="X_prime",
-            y="Y_prime",
+            tel_d2,
+            x="X",
+            y="Y",
             color=selected_telemetry,
             color_continuous_scale="Pinkyl",
-            render_mode="webgl",
+            title=None,
+            render_mode="scattergl",
+            hover_data=hover_dict,
         )
 
-        fig = go.Figure(data=fig1.data + fig2.data)
+        fig1.update_layout(
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
+            plot_bgcolor="rgb(229,229,229)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            showlegend=False,
+            margin=dict(l=0, r=0, t=0, b=0),
+        )
+        fig1.update_yaxes(scaleanchor="x", scaleratio=1)
+        fig1.update_coloraxes(showscale=False)
 
-    fig.update_layout(
-        xaxis=dict(visible=False),
-        yaxis=dict(visible=False),
-        plot_bgcolor="rgba(0,0,0,1)",
-        paper_bgcolor="rgba(0,0,0,0)",
-        showlegend=False,
-        margin=dict(l=0, r=0, t=0, b=0),
-    )
+        fig2.update_layout(
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
+            plot_bgcolor="rgb(229,229,229)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            margin=dict(l=0, r=0, t=0, b=0),
+        )
+        fig2.update_yaxes(scaleanchor="x", scaleratio=1)
 
-    fig.update_yaxes(scaleanchor="x", scaleratio=1)
-
-    return fig
+        return [
+            dbc.Row(
+                children=[
+                    dbc.Col(dcc.Graph(figure=fig1)),
+                    dbc.Col(dcc.Graph(figure=fig2)),
+                ]
+            )
+        ], dbc.Row(
+            children=[
+                dbc.Col(children=[html.H5(f"{selected_driver[0]['FullName']}")]),
+                dbc.Col(children=[html.H5(f"{selected_driver[1]['FullName']}")]),
+            ]
+        )
