@@ -3,6 +3,7 @@ WITH victors AS(SELECT
 , Count(CASE WHEN "Position" = 1 THEN 1 ELSE null END) AS "Wins"
 FROM
 "Race_Results"
+WHERE "Event" < 21
 GROUP BY "FullName"
 ), joined AS(
 SELECT
@@ -12,8 +13,7 @@ SELECT
 FROM
 victors v FULL OUTER JOIN "Champs" c
 ON v."FullName" = c."FullName"
-),
-p AS (SELECT 
+), p AS (SELECT 
 	"FullName"
 	, SUM("Points") AS "Points"
 FROM
@@ -22,15 +22,20 @@ FROM
 		, "Points" 
 	FROM 
 		"Race_Results"
+	WHERE 
+		"Event" < 21
 	UNION ALL 
 	SELECT
 		"FullName"
 		, "Points"
 	FROM 
-		"Sprint_Results")
+		"Sprint_Results"
+	WHERE 
+		"Event" < 21
+		)
 GROUP BY "FullName"
 ORDER BY "Points" DESC
-), joined2 AS (
+),  joined2 AS (
 SELECT 
     ROW_NUMBER() OVER (ORDER BY "Points" DESC) AS "Position"
 	, p."FullName"
@@ -41,8 +46,7 @@ SELECT
 FROM 
 p JOIN "Photo_Link" l
 ON p."FullName" = l."FullName"
-ORDER BY "Position")
-, driver_pos AS
+ORDER BY "Position"), driver_pos AS
 (SELECT 
 CASE
 	WHEN "Position" < 10 THEN '# ' || "Position"::varchar(4)
@@ -56,7 +60,6 @@ END "Position"
 , "Team"
 FROM
 joined2)
-
 SELECT 
 	j."FullName"
 	, j."Wins"
@@ -71,4 +74,6 @@ FROM
 ON pl."FullName" = d."FullName" 
 JOIN joined j 
 ON pl."FullName" = j."FullName"
-ORDER BY "Position_num" ASC
+ORDER BY "Position_num" ASC;
+
+

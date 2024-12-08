@@ -18,7 +18,7 @@ layout = dbc.Container(
             children=[
                 dbc.Container(
                     children=[
-                        dbc.Row(
+                        dbc.Col(
                             children=[
                                 dbc.Row(
                                     children=[
@@ -27,7 +27,7 @@ layout = dbc.Container(
                                                 html.H1(
                                                     "2024 F1 Driver Statistics",
                                                     style={
-                                                        "textAlign": "center",
+                                                        "textAlign": "left",
                                                     },
                                                 ),
                                             ]

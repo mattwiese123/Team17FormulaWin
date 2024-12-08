@@ -12,7 +12,9 @@ WITH table_1 AS (SELECT
 FROM
 "Events" ev JOIN "Race_Results" rr
 ON ev."Year" = rr."Year"
-AND ev."Event" = rr."Event"),
+AND ev."Event" = rr."Event"
+WHERE ev."Event" < 21
+AND rr."Event" < 21),
 df8 AS (
 SELECT DISTINCT ON ("Year", "Event", "Driver")
 	"Year"
@@ -26,10 +28,10 @@ SELECT DISTINCT ON ("Year", "Event", "Driver")
 FROM 
 	"Race_Laps"
 WHERE "LapTime_sec" IS NOT NULL
+AND "Event" < 21
 ORDER BY 
 	"Year", "Event", "Driver", "LapTime" ASC
-),
-table_2 AS (
+), table_2 AS (
 SELECT 
 	table_1."Year"
 	, table_1."Event"
@@ -50,8 +52,7 @@ table_1 JOIN df8
 ON table_1."Year" = df8."Year"
 AND table_1."Event" = df8."Event"
 AND table_1."Abbreviation" = df8."Driver"
-),
-table_3 AS (
+), table_3 AS (
 SELECT 
 	"Year"
 	, "Event"
@@ -67,6 +68,7 @@ WHERE
 	AND "LapTime_sec" IS NOT NULL
 	AND "PitOutTime_sec" IS NULL
 	AND "PitInTime_sec" IS NULL
+	AND "Event" < 21
 ),
 table_4 AS (
 	SELECT 
@@ -122,5 +124,4 @@ table_graph_1 AS (
 	FROM table_6
 	WHERE "FullName" IS NOT NULL
 )
-
 SELECT * FROM table_graph_1;
