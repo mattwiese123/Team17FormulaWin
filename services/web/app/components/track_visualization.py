@@ -54,7 +54,7 @@ def make_layout():
                                     dcc.Dropdown(
                                         id="telemetry-dropdown",
                                         options=telemetry_options,
-                                        value=1,
+                                        value="Speed",
                                         clearable=False,
                                     ),
                                     selected_driver_label,
@@ -69,10 +69,10 @@ def make_layout():
     )
 
 
-@callback(
-    Output("selected-driver-label", "children"),
-    Input("tv-driver-dropdown", "value"),
-)
+# @callback(
+#     Output("selected-driver-label", "children"),
+#     Input("tv-driver-dropdown", "value"),
+# )
 def update_selected_driver_label(value):
     if not value:
         return dbc.Row(children=[html.H5("No driver selected")])
@@ -173,6 +173,7 @@ def update_current_event(event):
 
 @callback(
     Output("track-graph", "children"),
+    Output("selected-driver-label", "children"),
     Input("tv-driver-dropdown", "value"),
     Input("tv-driver-dropdown", "options"),
     Input("telemetry-dropdown", "value"),
@@ -181,8 +182,6 @@ def update_current_event(event):
 def update_graph(selected_driver, driver_options, selected_telemetry, event):
     if not selected_telemetry:
         selected_telemetry = "Speed"
-    if not driver_options:
-        return no_update
 
     def get_driver_tel_df(event: int, selected_driver_number_list: list):
         driver_string = "(" + ",".join(selected_driver_number_list) + ")"
@@ -208,6 +207,19 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
         )
 
         fig.update_traces(line=dict(width=5))
+        fig.update_layout(
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
+            plot_bgcolor="rgb(229,229,229)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            showlegend=False,
+            margin=dict(l=0, r=0, t=0, b=0),
+        )
+
+        fig.update_yaxes(scaleanchor="x", scaleratio=1)
+        return [dcc.Graph(figure=fig)], dbc.Row(
+            children=[html.H5("No driver selected")]
+        )
 
     elif len(selected_driver) == 1:
         driver_laps = get_driver_tel_df(
@@ -223,6 +235,20 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
             color=selected_telemetry,
             color_continuous_scale="Pinkyl",
             title=f"Track with Sectors",
+        )
+
+        fig.update_layout(
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
+            plot_bgcolor="rgb(229,229,229)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            showlegend=False,
+            margin=dict(l=0, r=0, t=0, b=0),
+        )
+
+        fig.update_yaxes(scaleanchor="x", scaleratio=1)
+        return [dcc.Graph(figure=fig)], dbc.Row(
+            children=[dbc.Col(children=[html.H5(f"{selected_driver[0]['FullName']}")])]
         )
 
     elif len(selected_driver) >= 2:
@@ -293,17 +319,9 @@ def update_graph(selected_driver, driver_options, selected_telemetry, event):
                     dbc.Col(dcc.Graph(figure=fig2)),
                 ]
             )
-        ]
-        # fig = go.Figure(data=fig1.data + fig2.data)
-
-    fig.update_layout(
-        xaxis=dict(visible=False),
-        yaxis=dict(visible=False),
-        plot_bgcolor="rgb(229,229,229)",
-        paper_bgcolor="rgba(0,0,0,0)",
-        showlegend=False,
-        margin=dict(l=0, r=0, t=0, b=0),
-    )
-
-    fig.update_yaxes(scaleanchor="x", scaleratio=1)
-    return [dcc.Graph(figure=fig)]
+        ], dbc.Row(
+            children=[
+                dbc.Col(children=[html.H5(f"{selected_driver[0]['FullName']}")]),
+                dbc.Col(children=[html.H5(f"{selected_driver[1]['FullName']}")]),
+            ]
+        )

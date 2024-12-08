@@ -8,7 +8,7 @@ import plotly.express as px
 
 
 def make_layout():
-    return dcc.Graph(id="lapTime_fig")
+    return dcc.Loading(dcc.Graph(id="lapTime_fig"), type="circle")
 
 
 @callback(

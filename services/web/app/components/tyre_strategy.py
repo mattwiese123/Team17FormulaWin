@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 
 
 def make_layout():
-    return dcc.Graph(id="tyre_fig")
+    return dcc.Loading(dcc.Graph(id="tyre_fig"), type="circle")
 
 
 @callback(

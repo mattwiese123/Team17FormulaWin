@@ -7,9 +7,9 @@ def make_layout():
         dash_table.DataTable(
             id="pred_table",
             style_as_list_view=True,
-            style_cell={"padding": "2px"},
+            style_cell={"padding": "2px", "textAlign": "center"},
             page_action="none",
-            style_table={"height": "600px", "overflowY": "auto"},
+            style_table={"height": "650px", "overflowY": "auto"},
             style_header={"backgroundColor": "white", "fontWeight": "bold"},
         ),
     )

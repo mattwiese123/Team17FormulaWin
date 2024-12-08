@@ -5,7 +5,7 @@ from dash import Input, Output, callback, html
 
 def make_layout():
     return dbc.Col(
-        children=[html.H4("Weather"), html.Pre(id="weather")],
+        children=[html.H3("Weather"), html.Pre(id="weather")],
         width={"size": "auto", "order": 1},
     )
 

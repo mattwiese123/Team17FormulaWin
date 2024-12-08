@@ -8,8 +8,12 @@ import pandas as pd
 def make_layout():
     return dbc.Col(
         children=[
-            html.Pre(html.H1(id="event_name")),
-            html.Pre(html.H3(id="event_date")),
+            dbc.Row(
+                children=[
+                    html.H1(id="event_name"),
+                    html.H3(id="event_date"),
+                ]
+            )
         ],
         width={"size": "auto", "order": 1},
     )
@@ -28,5 +32,5 @@ def event_title(RoundNumber):
     location = df["Location"][0]
     date = df["EventDate"][0]
     result_title = event_name + " (" + location + ")"
-    result_date = "date: " + date.strftime("%Y-%m-%d")
+    result_date = "Date: " + date.strftime("%Y-%m-%d")
     return result_title, result_date

@@ -8,11 +8,12 @@ import plotly.express as px
 
 
 def make_layout():
-    return (
+    return dcc.Loading(
         dcc.Graph(
             id="position_fig",
             style={"box-shadow": "0px -2px 2px rgb(227, 6, 0) inset"},
         ),
+        type="circle",
     )
 
 

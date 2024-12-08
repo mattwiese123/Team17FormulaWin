@@ -64,8 +64,8 @@ def update_pred_v_t3_info(event):
                                     html.Img(
                                         src=driver["HeadshotUrl"],
                                         style={
-                                            "width": "150px",
-                                            "height": "125px",
+                                            "width": "120px",
+                                            "height": "100px",
                                             "display": "block",
                                             "margin-left": "auto",
                                             "margin-right": "auto",
