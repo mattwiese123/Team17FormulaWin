@@ -22,29 +22,36 @@ def driver_points_func():
 def create_team_table(team_points):
     # Crear la tabla
     col_map = {
-        "Logo": dict(id="Logo", name="", presentation="markdown"),
-        "Position": dict(id="Position", name=""),
+        "Logo": dict(
+            id="Logo",
+            name="",
+            presentation="markdown",
+        ),
+        "Position": dict(id="Position", name="", presentation="markdown"),
     }
     columns_format = [
         dict(id=col, name=col) if col not in ("Logo", "Position") else col_map[col]
         for col in team_points.columns
     ]
-    return dash_table.DataTable(
+    table = dash_table.DataTable(
         markdown_options={"html": True},
         data=team_points.to_dict(orient="records"),
         columns=columns_format,
         style_as_list_view=True,
-        style_cell_conditional=[
-            {"if": {"column_id": c}, "textAlign": "center"} for c in team_points.columns
+        style_cell={"text-align": "left"},
+        style_data_conditional=[
+            {"if": {"column_id": c}, "fontSize": "20px", "font-weight": "bold"}
+            for c in ("Position")
         ],
     )
+    return table
 
 
 def create_driver_table(datat):
     # Crear la tabla
     col_map = {
         "Photo": dict(id="Photo", name="", presentation="markdown"),
-        "Position": dict(id="Position", name=""),
+        "Position": dict(id="Position", name="", presentation="markdown"),
     }
     columns_format = [
         dict(id=col, name=col) if col not in ("Photo", "Position") else col_map[col]
@@ -75,9 +82,8 @@ def make_layout():
             html.H1(
                 "2024 F1 Season Standings",
                 style={
-                    "text-align": "center",  # Alineado a la izquierda
+                    "text-align": "left",  # Alineado a la izquierda
                     "margin-bottom": "20px",
-                    "margin-left": "-80px",  # Separación desde el borde izquierdo
                     "color": "black",
                     "font-size": "50px",
                 },
@@ -90,14 +96,12 @@ def make_layout():
                         [
                             dbc.Row(
                                 children=[
-                                    dbc.Col(),
                                     dbc.Col(
                                         html.H1(
                                             children=["Teams"],
-                                            style={"text-align": "center"},
+                                            style={"text-align": "left"},
                                         ),
                                     ),
-                                    dbc.Col(),
                                 ]
                             ),
                             team_fig_table,
@@ -106,7 +110,7 @@ def make_layout():
                             "width": "50%",
                             "display": "inline-block",
                             "vertical-align": "top",
-                            "padding": "25px",
+                            "padding": "35px",
                         },
                     ),
                     # Contenedor de conductores
@@ -114,14 +118,12 @@ def make_layout():
                         [
                             dbc.Row(
                                 children=[
-                                    dbc.Col(),
                                     dbc.Col(
                                         html.H1(
                                             children=["Drivers"],
-                                            style={"text-align": "center"},
+                                            style={"text-align": "left"},
                                         ),
                                     ),
-                                    dbc.Col(),
                                 ]
                             ),
                             driver_fig_table,
@@ -130,7 +132,7 @@ def make_layout():
                             "width": "50%",
                             "display": "inline-block",
                             "vertical-align": "top",
-                            "padding": "25px",
+                            "padding": "35px",
                         },
                     ),
                 ]
