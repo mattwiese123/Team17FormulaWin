@@ -3,7 +3,7 @@ services:
     build:
       context: ./services/web
       dockerfile: Dockerfile
-    command: gunicorn --worker-class gevent --threads 3 --bind 0.0.0.0:5000 app.app:server
+    command: gunicorn --worker-class gevent --threads 4 --bind 0.0.0.0:5000 app.app:server
     expose:
       - 5000
     env_file:
@@ -12,6 +12,6 @@ services:
   nginx:
     build: ./services/nginx
     ports:
-      - 1337:80
+      - 80:80
     depends_on:
       - web
