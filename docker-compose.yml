@@ -10,8 +10,15 @@ services:
       - ./.env
 
   nginx:
-    build: ./services/nginx
-    ports:
-      - 80:80
+    container_name: nginx
+    image: nginx:latest
+    restart: unless-stopped
+    environment:
+      - DOMAIN
     depends_on:
       - web
+    ports:
+      - 80:80
+    volumes:
+      - ./services/nginx/templates:/etc/nginx/templates:ro
+
