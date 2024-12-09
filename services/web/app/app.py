@@ -3,11 +3,12 @@ from dash import Dash
 import dash_bootstrap_components as dbc
 
 
-from .components import navbar
-
 app = Dash(
     __package__,
-    external_stylesheets=[dbc.themes.JOURNAL, dbc.icons.FONT_AWESOME],
+    external_stylesheets=[
+        dbc.themes.BOOTSTRAP,
+        "/usr/src/app/assets/style.css",
+    ],
     use_pages=True,
 )
 server = app.server
@@ -15,15 +16,9 @@ server = app.server
 
 app.layout = dbc.Container(
     children=[
-        # navbar
-        dbc.Row(
-            [
-                navbar.make_layout(),
-            ]
-        ),
         dash.page_container,
     ],
-    fluid=True,
+    className="page-background",
 )
 
 if __name__ == "__main__":

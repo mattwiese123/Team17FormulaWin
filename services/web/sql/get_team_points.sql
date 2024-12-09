@@ -7,12 +7,14 @@ FROM
 		, "Points" 
 	FROM 
 		"Race_Results"
+  WHERE "Event" < 21
 	UNION ALL 
 	SELECT
 		"TeamName"
 		, "Points"
 	FROM 
-		"Sprint_Results")
+		"Sprint_Results"
+  WHERE "Event" < 21)
 GROUP BY "TeamName"
 ORDER BY "Points" DESC
 ), joined AS (
@@ -29,12 +31,12 @@ ORDER BY "Position")
 
 SELECT 
 CASE
-	WHEN "Position" < 10 THEN '# ' || "Position"::varchar(4)
-	ELSE '#' || "Position"::varchar(4)
+WHEN "Position" < 10 THEN '<div style="font-size: 30px !important; font-weight: bold !important;"># ' || "Position"::varchar(4) || '</div>'
+ELSE '<div style="font-size: 30px !important; font-weight: bold !important;">#' || "Position"::varchar(4) || '</div>'
 END "Position"
-, "TeamName"
+, '<img src="' || "Logo" || '" style="height: 100px; width:175px;"/>' AS "Logo"
+, "TeamName" AS "Team Name"
 , "Points"
-, "Logo"
 , "Country"
 FROM
 joined

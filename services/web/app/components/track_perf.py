@@ -1,22 +1,52 @@
 import dash_bootstrap_components as dbc
-from dash import html, dcc, callback, Input, Output
-import pandas as pd
+from dash import html, dcc, callback, Input, Output, dash_table
 import plotly.express as px
 from util import get_data
 
-event_track_graph = dcc.Graph(id="event-track-graph")
+event_track_graph = dcc.Loading(
+    children=[dcc.Graph(id="event-track-graph", style={"height": "450px"})],
+    type="circle",
+)
 
-track_information = html.Div(id="track-information")
+track_information = dbc.Col(id="track-information")
+
+track_fun_facts = html.Div(id="track-fun-facts")
 
 
 def make_layout():
     return html.Div(
         children=[
-            dbc.Row(children=[html.H1(children="Track Info")]),
             dbc.Row(
                 children=[
-                    dbc.Col(children=[track_information]),
-                    dbc.Col(children=[event_track_graph]),
+                    dbc.Col(
+                        children=[
+                            dbc.Row(
+                                children=[
+                                    html.H3(
+                                        children="Track Information",
+                                        style={"padding-top": "0.5em"},
+                                    )
+                                ]
+                            ),
+                            dbc.Row(children=[track_information]),
+                        ],
+                        style={"width": "40%"},
+                    ),
+                    dbc.Col(
+                        children=[
+                            event_track_graph,
+                        ],
+                        style={"width": "60%"},
+                    ),
+                ],
+            ),
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        children=[
+                            dbc.Row(children=[track_fun_facts]),
+                        ]
+                    ),
                 ]
             ),
         ]
@@ -28,23 +58,23 @@ def make_layout():
     Input("RoundNumber_dropdown", "value"),
 )
 def update_event_info(event):
-    track_df = pd.read_csv("/usr/src/app/track_data.csv")
-    col_list = ["Length", "Total Laps", "Turns", "Type", "Direction"]
-    children = []
-
-    for col in col_list:
-        temp = dbc.Row(
-            [
-                html.H5(
-                    [
-                        f"Track {col}: {track_df[track_df['Round']==event][col].values[0]}"
-                    ]
-                )
-            ]
+    with open("sql/get_track_metadata.sql") as f:
+        query = f.read()
+    track_df = get_data.get_data(query.format(EventNumber=event))
+    track_df["Direction"] = track_df["Direction"].str.replace(
+        "Part clockwise and part anti-clockwise (figure eight)", "Figure eight"
+    )
+    columns_format = [dict(id="index", name=""), dict(id="0", name="")]
+    return [
+        dash_table.DataTable(
+            markdown_options={"html": True},
+            data=track_df.T.reset_index().to_dict(orient="records"),
+            columns=columns_format,
+            style_as_list_view=True,
+            style_cell={"textAlign": "center"},
+            style_header={"display": "none"},
         )
-        children.append(temp)
-
-    return children
+    ]
 
 
 @callback(
@@ -54,7 +84,7 @@ def update_event_info(event):
 def update_event_graph(event):
     def get_driver_tel_df(event: int):
         driver_string = "(" + ",".join([str(1)]) + ")"
-        with open("sql/get_event_driver_telemetry.sql") as f:
+        with open("sql/get_event_plot.sql") as f:
             query = f.read()
         df = get_data.get_data(
             query.format(EventNumber=event, DriverNumbers=driver_string)
@@ -68,7 +98,9 @@ def update_event_graph(event):
         x="X",
         y="Y",
         color="Sector",
-        title="Track with Sectors",
+        title=None,
+        render_mode="scattergl",
+        hover_data={"X": False, "Y": False, "Sector": True},
     )
 
     fig.update_traces(line=dict(width=5))
@@ -76,12 +108,32 @@ def update_event_graph(event):
     fig.update_layout(
         xaxis=dict(visible=False),
         yaxis=dict(visible=False),
-        plot_bgcolor="rgba(0,0,0,1)",
-        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(229,229,229,1)",
+        paper_bgcolor="rgba(229,229,229,0)",
         showlegend=False,
-        margin=dict(l=0, r=0, t=0, b=0),
+        margin=dict(l=5, r=5, t=5, b=5),
     )
 
     fig.update_yaxes(scaleanchor="x", scaleratio=1)
 
     return fig
+
+
+@callback(
+    Output("track-fun-facts", "children"),
+    Input("RoundNumber_dropdown", "value"),
+)
+def update_fun_fact(event):
+    children = []
+    with open("sql/get_track_fun_facts.sql") as f:
+        query = f.read()
+    track_df = get_data.get_data(query.format(EventNumber=event))
+
+    children.append(html.H3(f'{track_df['Grand Prix'].values[0]} Fun Facts'))
+    ul = []
+    for col in track_df.columns[1:]:
+        temp = html.Li(f"{track_df[col].values[0]}")
+        ul.append(temp)
+    children.append(html.Ol(children=ul, className="fun-fact-list"))
+
+    return children

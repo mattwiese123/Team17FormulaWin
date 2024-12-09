@@ -7,11 +7,23 @@ import pandas as pd
 
 def make_layout():
     return dbc.Col(
-        html.Pre(html.H3(id="event_name")), width={"size": "auto", "order": 1}
+        children=[
+            dbc.Row(
+                children=[
+                    html.H1(id="event_name"),
+                    html.H3(id="event_date"),
+                ]
+            )
+        ],
+        width={"size": "auto", "order": 1},
     )
 
 
-@callback(Output("event_name", "children"), Input("RoundNumber_dropdown", "value"))
+@callback(
+    Output("event_name", "children"),
+    Output("event_date", "children"),
+    Input("RoundNumber_dropdown", "value"),
+)
 def event_title(RoundNumber):
     with open("sql/get_event_weather.sql") as f:
         query = f.read()
@@ -19,12 +31,6 @@ def event_title(RoundNumber):
     event_name = df["EventName"][0]
     location = df["Location"][0]
     date = df["EventDate"][0]
-    result = (
-        event_name
-        + " ("
-        + location
-        + ")"
-        + "                date: "
-        + date.strftime("%Y-%m-%d")
-    )
-    return result
+    result_title = event_name + " (" + location + ")"
+    result_date = "Date: " + date.strftime("%Y-%m-%d")
+    return result_title, result_date

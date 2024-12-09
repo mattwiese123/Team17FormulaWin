@@ -35,52 +35,54 @@ def update_pred_v_t3_info(event):
 
     def make_top_3(df, position_col, title):
         # FullName, TeamName, PredPos, ActualPosition, Logo, HeadshotUrl
+        # São Paulo Grand Prix
         driver_options = list()
-        driver_options.append(html.H1([title]))
+        driver_options.append(html.H1(children=[title], style={"text-align": "center"}))
         for driver in df.to_dict(orient="records"):
             driver_name = f"{driver['FullName']}"
-            # team_name = f"{driver['TeamName']}"
             driver_position = f"{driver[position_col]}"
             driver_label_list = html.Div(
                 children=[
-                    html.Img(src=driver["HeadshotUrl"], style={"padding": 5}),
                     html.Div(
-                        driver_position,
-                        style={
-                            "font-size": 32,
-                            "position": "absolute",
-                            "top": "1px",
-                            "left": "2px",
-                            "color": "white",
-                            "text-shadow": "-1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black",
-                        },
+                        children=[
+                            dbc.Row(
+                                [
+                                    html.Div(
+                                        [
+                                            driver_position,
+                                        ],
+                                        style={
+                                            "font-size": 32,
+                                            "position": "absolute",
+                                            "top": "1px",
+                                            "left": "-50px",
+                                            "color": "white",
+                                            "text-shadow": "-1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black",
+                                        },
+                                    ),
+                                    html.Img(
+                                        src=driver["HeadshotUrl"],
+                                        style={
+                                            "width": "120px",
+                                            "height": "100px",
+                                            "display": "block",
+                                            "margin-left": "auto",
+                                            "margin-right": "auto",
+                                        },
+                                    ),
+                                ]
+                            )
+                        ],
                     ),
-                    html.Br(),
                     html.Span(
                         driver_name,
-                        style={"font-size": 15, "padding": 5, "color": "black"},
+                        style={
+                            "font-size": 24,
+                            "color": "black",
+                            "font-weight": "bold",
+                            "padding-top": "-0.5em",
+                        },
                     ),
-                    #                     html.Br(),
-                    #                     dbc.Row(
-                    #                         children=[
-                    #                             html.Img(
-                    #                                 src=driver["Logo"],
-                    #                                 style={
-                    #                                     "padding": 5,
-                    #                                     "max-width": "20%",
-                    #                                     "height": "auto",
-                    #                                 },
-                    #                             ),
-                    #                             html.Span(
-                    #                                 team_name,
-                    #                                 style={
-                    #                                     "font-size": 15,
-                    #                                     "padding": 5,
-                    #                                     "color": "black",
-                    #                                 },
-                    #                             ),
-                    #                         ]
-                    #                     ),
                 ],
                 style={
                     "padding": 3,
@@ -92,7 +94,69 @@ def update_pred_v_t3_info(event):
             driver_options.append(driver_label_list)
         return driver_options
 
-    pred_col = make_top_3(pred_df, "PredPos", "Predicted Top 3")
-    actual_col = make_top_3(actual_df, "ActualPosition", "Actual Top 3")
+    if event < 21:
+        pred_col = make_top_3(pred_df, "PredPos", "Predicted Top 3")
+        actual_col = make_top_3(actual_df, "ActualPosition", "Actual Top 3")
+        return pred_col, actual_col
+    else:
+        pred_col = make_top_3(pred_df, "PredPos", "Predicted Top 3")
+        actual_col = []
+        actual_col.append(
+            html.H1(children=["Actual Top 3"], style={"text-align": "center"})
+        )
+        actual_col.extend(
+            [
+                html.Div(
+                    children=[
+                        html.Div(
+                            children=[
+                                dbc.Row(
+                                    [
+                                        html.Div(
+                                            [
+                                                f"{i}",
+                                            ],
+                                            style={
+                                                "font-size": 32,
+                                                "position": "absolute",
+                                                "top": "1px",
+                                                "left": "-50px",
+                                                "color": "white",
+                                                "text-shadow": "-1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black",
+                                            },
+                                        ),
+                                        html.Img(
+                                            src="/assets/icons8-formula-1.svg",
+                                            style={
+                                                "width": "120px",
+                                                "height": "100px",
+                                                "display": "block",
+                                                "margin-left": "auto",
+                                                "margin-right": "auto",
+                                            },
+                                        ),
+                                    ]
+                                )
+                            ],
+                        ),
+                        html.Span(
+                            "São Paulo Grand Prix",
+                            style={
+                                "font-size": 24,
+                                "color": "black",
+                                "font-weight": "bold",
+                                "padding-top": "-0.5em",
+                            },
+                        ),
+                    ],
+                    style={
+                        "padding": 3,
+                        "position": "relative",
+                        "text-align": "center",
+                    },
+                )
+                for i in range(1, 4)
+            ]
+        )
 
-    return pred_col, actual_col
+        return pred_col, actual_col

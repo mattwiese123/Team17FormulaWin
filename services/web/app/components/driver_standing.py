@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
-from dash import callback, dcc, html, Input, Output
+from dash import callback, dcc, html, Input, Output, no_update, dash_table
 from util import get_data
+import dash_bootstrap_components as dbc
 
 
 def driver_stats1_func():
@@ -35,154 +36,169 @@ driver_stats3 = driver_stats3_func()
 def make_layout():
     return html.Div(
         [
-            html.H1(
-                "F1 Driver Statistics",
-                style={
-                    "textAlign": "center",
-                    # "color": "black",
-                    # "fontFamily": "Comic Sans MS",
-                },
-            ),
-            # Menú desplegable para elegir el piloto
-            dcc.Dropdown(
-                id="driver-dropdown",
-                options=[
-                    {"label": name, "value": name} for name in driver_stats1["FullName"]
-                ],
-                value="Lewis Hamilton",  # Valor inicial
-                placeholder="Select a driver",
-                style={
-                    # "width": "35%",
-                    # "margin": "0 auto",
-                    # "padding": "0px",
-                    # "position": "absolute",  # Hace que se pueda posicionar con respecto al contenedor
-                    # "top": "30px",  # Ajusta la distancia desde la parte superior
-                    # "right": "130px",
-                    # "color": "black",  # Cambia el color del texto a negro
-                    # "border": "2px solid black",  # Da un borde negro de 2 píxeles
-                    # "border-radius": "5px",  # Opcional: agrega bordes redondeados
-                    # "background-color": "white",  # Cambia el fondo a blanco},
-                    # "outline": "none",
-                },
-            ),
-            # Contenedor para los gráficos
-            html.Div(
-                [
-                    # Gráfico 1 (arriba a la derecha)
-                    dcc.Graph(
-                        id="driver-stats-graph-2",
-                        style={
-                            # "width": "48%",
-                            # "display": "inline-block",
-                            # "vertical-align": "top",
-                            # "margin-left": "100px",
-                            # "margin-right": "center",
-                            # "margin-top": "40px",
-                        },
-                    ),
-                ]
-            ),
-            # Gráfico 3 (abajo, ocupa todo el ancho)
             dcc.Graph(
-                id="driver-stats-table",
-                style={},  # "width": "100%", "margin-top": "-25px", "margin-left": "15px"},
+                id="driver-stats-graph-2",
             ),
-        ]
+            dbc.Row(
+                id="driver-stats-table",
+            ),
+        ],
+        style={"marin": "0.15em", "padding": "0.15em"},
     )
 
 
 # Callback para actualizar el segundo gráfico
 @callback(Output("driver-stats-graph-2", "figure"), [Input("driver-dropdown", "value")])
 def update_graph_2(selected_driver):
-    driver_data = driver_stats2[driver_stats2["FullName"] == selected_driver].iloc[0]
-    fig = go.Figure(
-        data=[
-            go.Table(
-                columnorder=[2, 3, 4, 5, 6, 7],
-                columnwidth=[0.8, 1, 1, 0.6, 1, 0.6],
-                header=dict(
-                    values=[
-                        "Driver",
-                        "Nationality",
-                        "Team",
-                        "Current Rank",
-                        "Championships",
-                        "Wins",
-                    ],
-                    fill_color=["white", "white", "white", "white", "grey", "grey"],
-                    font=dict(
-                        color=["black", "black", "black", "black", "white", "white"],
-                        size=[12, 12, 12, 12, 26, 26],
-                    ),
-                    align=["left", "left", "left", "left", "right", "center"],
-                    height=30,
-                    line_color=["white", "white", "white", "white", "grey", "grey"],
-                ),
-                cells=dict(
-                    values=[
-                        [driver_data["FullName"]],
-                        [driver_data["Country"]],
-                        [driver_data["Team"]],
-                        [driver_data["Position"]],
-                        [driver_data["Championships"]],
-                        [driver_data["Wins"]],
-                    ],
-                    fill_color=["white", "white", "white", "white", "grey", "grey"],
-                    font=dict(
-                        color=["black", "black", "black", "black", "white", "white"],
-                        size=28,
-                        family="Comic Sans MS",
-                    ),
-                    align=["left", "left", "left", "left", "center", "center"],
-                    height=40,
-                    line_color=["white", "white", "white", "white", "grey", "grey"],
-                ),
-            )
+    if not selected_driver:
+        return no_update
+    else:
+        driver_data = driver_stats2[driver_stats2["FullName"] == selected_driver].iloc[
+            0
         ]
-    )
-    fig.add_layout_image(
-        source=driver_data["Photo"],
-        x=-0.20,
-        y=0.10,  # Ajustar posición de la imagen
-        xref="paper",
-        yref="paper",
-        sizex=1.5,
-        sizey=1.5,
-        xanchor="left",
-        yanchor="bottom",
-    )
-    fig.update_layout(
-        margin=dict(l=250, r=10, t=110, b=10),
-        width=1500,
-        height=250,
-        paper_bgcolor="white",
-    )
-    return fig
+        fig = go.Figure(
+            data=[
+                go.Table(
+                    columnorder=[2, 3, 4, 5, 6, 7],
+                    columnwidth=[0.8, 1, 1, 0.6, 1, 0.6],
+                    header=dict(
+                        values=[
+                            "Driver",
+                            "Nationality",
+                            "Team",
+                            "Current Rank",
+                            "Championships",
+                            "Wins",
+                        ],
+                        fill_color=[
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                        ],
+                        font=dict(
+                            color=[
+                                "black",
+                                "black",
+                                "black",
+                                "black",
+                                "black",
+                                "black",
+                            ],
+                            size=[18, 18, 18, 18, 18, 18],
+                        ),
+                        align=[
+                            "center",
+                            "center",
+                            "center",
+                            "center",
+                            "center",
+                            "center",
+                        ],
+                        height=30,
+                        line_color=[
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                        ],
+                    ),
+                    cells=dict(
+                        values=[
+                            [driver_data["FullName"]],
+                            [driver_data["Country"]],
+                            [driver_data["Team"]],
+                            [driver_data["Position"]],
+                            [driver_data["Championships"]],
+                            [driver_data["Wins"]],
+                        ],
+                        fill_color=[
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                        ],
+                        font=dict(
+                            color=[
+                                "black",
+                                "black",
+                                "black",
+                                "black",
+                                "black",
+                                "black",
+                            ],
+                            size=28,
+                        ),
+                        align=[
+                            "center",
+                            "center",
+                            "center",
+                            "center",
+                            "center",
+                            "center",
+                        ],
+                        height=40,
+                        line_color=[
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                            "white",
+                        ],
+                    ),
+                )
+            ]
+        )
+        fig.add_layout_image(
+            source=driver_data["Photo"],
+            x=-0.13,
+            y=0.10,  # Ajustar posición de la imagen
+            xref="paper",
+            yref="paper",
+            sizex=1.5,
+            sizey=1.5,
+            xanchor="left",
+            yanchor="bottom",
+        )
+        fig.update_layout(
+            margin=dict(l=250, r=10, t=110, b=10),
+            # width=1500,
+            height=250,
+            paper_bgcolor="white",
+        )
+        return fig
 
 
 # Callback para actualizar el tercer gráfico
-@callback(Output("driver-stats-table", "figure"), [Input("driver-dropdown", "value")])
+@callback(Output("driver-stats-table", "children"), [Input("driver-dropdown", "value")])
 def update_table(selected_driver):
     driver_data = driver_stats3[driver_stats3["FullName"] == selected_driver].drop(
         columns=["FullName"]
     )
-    fig = go.Figure(
-        data=[
-            go.Table(
-                header=dict(
-                    values=["<b>" + col + "</b>" for col in driver_data.columns],
-                    fill_color="black",
-                    font=dict(color="white", size=14),
-                    align="center",
-                ),
-                cells=dict(
-                    values=[driver_data[col].values for col in driver_data.columns],
-                    fill_color="white",
-                    font=dict(color="black", size=12),
-                    align="center",
-                ),
-            )
-        ]
+    return dash_table.DataTable(
+        markdown_options={"html": True},
+        data=driver_data.to_dict(orient="records"),
+        # columns=columns_format,
+        style_as_list_view=True,
+        style_table={
+            "margin": "0.25em",
+            "padding": "0.25em",
+        },
+        style_header={
+            "background-color": "black",
+            "color": "white",
+            "padding": "0.15em",
+            "margin": "0.15em",
+            "text-align": "left",
+        },
+        style_cell_conditional=[
+            {"if": {"column_id": c}, "textAlign": "left"} for c in driver_data.columns
+        ],
     )
-    fig.update_layout(paper_bgcolor="white")  # , width=1600, height=400)
-    return fig
