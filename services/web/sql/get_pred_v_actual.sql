@@ -14,4 +14,7 @@ FROM
 WHERE
 	p."RoundNumber" = {EventNumber}
 	AND d."Event" = {EventNumber}
-  AND p."has_rain_R" = 'false'
+  AND CASE 
+  WHEN {EventNumber} < 21 THEN p."has_rain_R" IN ('false', 'true')
+  ELSE p."has_rain_R" IN ('false')
+  END

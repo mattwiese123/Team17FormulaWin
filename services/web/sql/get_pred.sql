@@ -6,6 +6,9 @@ select
     ,  "ActualPosition" AS "Actual Position" 
 from public."Pred"
 where "RoundNumber" = {RoundNumber}
-AND "has_rain_R" = 'false'
+AND CASE 
+  WHEN {RoundNumber} < 21 THEN "has_rain_R" IN ('false', 'true')
+  ELSE "has_rain_R" IN ('false')
+  END
 ORDER BY 
   "Actual Position", "Predicted Position"
