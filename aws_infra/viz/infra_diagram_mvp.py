@@ -22,15 +22,9 @@ with Diagram("FormulaWin AWS Infrastructure", show=False, direction="LR"):
 
     with Cluster("Code Base", direction="LR"):
         gh = Github("")
-        # with Cluster("Code Base"):
-        #     with Cluster("Web App"):
-        #         web_app_group = [
-        #             Custom("IaC", "./opentofu.png"),
-        #             Python("Dash code"),
-        #             Docker("Docker configs"),
-        #         ]
-        #     with Cluster("Data"):
-        #         data_code_group = [Python("Model code"), Python("ETL code")]
+
+    with Cluster("Data Pipelines"):
+        colab = Custom("FastF1", "./Google_Colaboratory_SVG_Logo.svg.png")
 
     dns >> ec2_web
     ec2_web >> db
@@ -38,3 +32,5 @@ with Diagram("FormulaWin AWS Infrastructure", show=False, direction="LR"):
     gh - ec2_web
 
     users >> dns
+
+    db << colab
