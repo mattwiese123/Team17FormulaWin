@@ -22,9 +22,7 @@ SELECT DISTINCT ON ("Year", "Event", "Driver")
 	, "Driver"
 	, "Compound"
 	, "TyreLife"
-	, LPAD(FLOOR(EXTRACT(EPOCH FROM ("LapTime")) / 60)::TEXT, 2, '0') || ':' ||
-    LPAD(FLOOR(EXTRACT(EPOCH FROM ("LapTime")) %% 60)::TEXT, 2, '0') || ':' ||
-    LPAD(FLOOR(EXTRACT(MILLISECOND FROM "LapTime"))::TEXT, 3, '0') AS "LapTime"
+  , SUBSTRING("LapTime"::VARCHAR(50), 4) AS "LapTime"
 FROM 
 	"Race_Laps"
 WHERE "LapTime_sec" IS NOT NULL
@@ -84,9 +82,7 @@ table_5 AS (
 	"Year"
 	, "Event"
 	, "Driver"
-	, LPAD(FLOOR(EXTRACT(EPOCH FROM ("LapTime")) / 60)::TEXT, 2, '0') || ':' ||
-    LPAD(FLOOR(EXTRACT(EPOCH FROM ("LapTime")) %% 60)::TEXT, 2, '0') || ':' ||
-    LPAD(FLOOR(EXTRACT(MILLISECOND FROM "LapTime"))::TEXT, 3, '0') AS "LapTime"
+  , SUBSTRING("LapTime"::VARCHAR(50), 4) AS "LapTime"
 FROM table_4 
 ),
 table_6 AS (
@@ -119,7 +115,7 @@ table_graph_1 AS (
 		, COALESCE("Status", 'No data') AS "Status"
 		, COALESCE("BestLapTime", 'No data') AS "Best Lap Time"
 		, COALESCE("Compound", 'No data') AS "Compound"
-		, COALESCE("TyreLife"::VARCHAR(50), 'No data') AS "TyreLife"
+		, "TyreLife"::int8 AS "Tyre Life"
 		, COALESCE("AvgLapTime", 'No data') AS "Avg Lap Time"
 	FROM table_6
 	WHERE "FullName" IS NOT NULL
