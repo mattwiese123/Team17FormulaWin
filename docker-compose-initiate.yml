@@ -1,39 +1,24 @@
 services:
-  web:
-    build:
-      context: ./services/web
-      dockerfile: Dockerfile
-    command: gunicorn --worker-class gevent --threads 4 --bind 0.0.0.0:5000 app.app:server
-    expose:
-      - 5000
-    env_file:
-      - ./.env
-
   nginx:
     container_name: nginx
     image: nginx:latest
-    restart: unless-stopped
     environment:
       - DOMAIN
-    depends_on:
-      - web
     ports:
       - 80:80
-      - 443:443
     volumes:
-      - ./services/nginx/templates:/etc/nginx/templates:ro
-      - ./services/letsencrypt:/etc/letsencrypt:ro
+      - ./services/nginx/templates-initiate:/etc/nginx/templates
+      - ./services/letsencrypt:/etc/letsencrypt
       - ./services/certbot/data:/var/www/certbot
   certbot:
     container_name: certbot
     image: certbot/certbot:latest
     depends_on:
       - nginx
-    command: >-
+    command: >- 
              certonly --reinstall --webroot --webroot-path=/var/www/certbot
              --email ${EMAIL} --agree-tos --no-eff-email
              -d ${DOMAIN}
     volumes:
       - ./services/letsencrypt:/etc/letsencrypt
       - ./services/certbot/data:/var/www/certbot
-
