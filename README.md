@@ -82,7 +82,6 @@ sudo docker compose -f docker-compose.yml down -v && sudo docker compose -f dock
 sudo docker compose -f docker-compose.yml down -v 
 ```
 
-### References
+## Data Statement
 
-<https://www.docker.com/blog/how-to-use-the-official-nginx-docker-image/>
-<https://medium.com/@yahyasghiouri1998/dockerize-your-dash-app-f502275475fa>
+The data for this project can be assembled using the notebooks provided. This project is intended to be used with an external PostgreSQL database with the data from the notebooks loaded as tables. For our project, we chose an AWS RDS. Data was obtained using the fastf1 api and Wikipedia.
