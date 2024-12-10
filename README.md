@@ -44,9 +44,9 @@ In this repo you will code for:
 
 - Used to download the telemetry data for the heatmap plot.
 
-`pipeline/get_wiki.ipynb`:
+`pipeline/events_and_fun_facts.ipynb`:
 
-- Used to download the fun facts.
+- Used to download the fun facts and events data.
 
 `pipeline/data`:
 
