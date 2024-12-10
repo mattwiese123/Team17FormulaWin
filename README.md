@@ -54,7 +54,7 @@ In this repo you will code for:
 
 ## Webapp
 
-<img src="/aws_infra/viz/formulawin_aws_infrastructure.png" style="height: 200px">
+<img src="/aws_infra/viz/formulawin_aws_infrastructure.png" style="height: 550px; text-align: center;">
 
 The Dash webapp uses docker compose. Nginx is used as a reverse proxy to the Dash app. For SSL/TLS, we use letsencrypt with certbot.
 
