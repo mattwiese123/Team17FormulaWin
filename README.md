@@ -60,6 +60,11 @@ The Dash webapp uses docker compose. Nginx is used as a reverse proxy to the Das
 
 It is expected that you have a `.env` file in the top level directory which has the same variables as the `.env.dev` file to connect to your PostgreSQL server.
 
+The following are reference articles we used to set up our stack:
+
+- [dockerizing flask](https://testdriven.io/blog/dockerizing-flask-with-postgres-gunicorn-and-nginx/)
+- [letsencrypt with docker](https://blog.jarrousse.org/2022/04/09/an-elegant-way-to-use-docker-compose-to-obtain-and-renew-a-lets-encrypt-ssl-certificate-with-certbot-and-configure-the-nginx-service-to-use-it/)
+
 ### Build container and get letsencrypt certs
 
 1. Clone repo
